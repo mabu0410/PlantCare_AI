@@ -1,0 +1,29 @@
+{
+  "expo": {
+    "name": "PlantCare AI",
+    "slug": "plantcare-ai",
+    "version": "2.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "scheme": "plantcare",
+    "splash": {
+      "backgroundColor": "#0A1628"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.plantcare.ai"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#0A1628"
+      },
+      "package": "com.plantcare.ai"
+    },
+    "plugins": [
+      "expo-camera",
+      "expo-image-picker",
+      "expo-font"
+    ]
+  }
+}
