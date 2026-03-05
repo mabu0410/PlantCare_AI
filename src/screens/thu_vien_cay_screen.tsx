@@ -14,6 +14,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useChuDe } from '../theme/chu_de';
 import { CAY_TRONG_MAU } from '../utils/du_lieu_mau';
 import TheThuyTinh from '../components/the_thuy_tinh';
+import { useNgonNgu, useCoChu } from '../utils/ngon_ngu';
 
 interface Props {
     navigation: any;
@@ -22,6 +23,8 @@ interface Props {
 const ThuVienCayScreen: React.FC<Props> = ({ navigation }) => {
     const { mau } = useChuDe();
     const [timKiem, setTimKiem] = useState('');
+    const t = useNgonNgu();
+    const s = useCoChu();
 
     const cayLocDuoc = useMemo(
         () =>
@@ -51,11 +54,11 @@ const ThuVienCayScreen: React.FC<Props> = ({ navigation }) => {
                                 <Text style={{ fontSize: 36 }}>{item.icon}</Text>
                             </View>
                             <View style={styles.cardInfo}>
-                                <Text style={[styles.cardName, { color: mau.chu_chinh }]}>
+                                <Text style={[styles.cardName, { color: mau.chu_chinh, fontSize: s(17) }]}>
                                     {item.ten}
                                 </Text>
                                 <Text
-                                    style={[styles.cardSci, { color: mau.chu_phu }]}
+                                    style={[styles.cardSci, { color: mau.chu_phu, fontSize: s(13) }]}
                                     numberOfLines={1}
                                 >
                                     {item.ten_khoa_hoc}
@@ -71,7 +74,7 @@ const ThuVienCayScreen: React.FC<Props> = ({ navigation }) => {
                                             ]}
                                         >
                                             <Text
-                                                style={[styles.diseaseText, { color: mau.canh_bao }]}
+                                                style={[styles.diseaseText, { color: mau.canh_bao, fontSize: s(11) }]}
                                             >
                                                 {benh}
                                             </Text>
@@ -96,11 +99,11 @@ const ThuVienCayScreen: React.FC<Props> = ({ navigation }) => {
         <SafeAreaView style={[styles.safeArea, { backgroundColor: mau.nen }]}>
             {/* Header */}
             <Animated.View entering={FadeInDown.duration(400)} style={styles.header}>
-                <Text style={[styles.title, { color: mau.chu_chinh }]}>
-                    Thư viện cây trồng 📚
+                <Text style={[styles.title, { color: mau.chu_chinh, fontSize: s(24) }]}>
+                    {t('tv_tieude')}
                 </Text>
-                <Text style={[styles.subtitle, { color: mau.chu_phu }]}>
-                    {CAY_TRONG_MAU.length} loại cây
+                <Text style={[styles.subtitle, { color: mau.chu_phu, fontSize: s(14) }]}>
+                    {CAY_TRONG_MAU.length} {t('tv_loaicay')}
                 </Text>
             </Animated.View>
 
@@ -112,10 +115,10 @@ const ThuVienCayScreen: React.FC<Props> = ({ navigation }) => {
                         { backgroundColor: mau.nen_the, borderColor: mau.vien },
                     ]}
                 >
-                    <Ionicons name="search-outline" size={20} color={mau.chu_nhat} />
+                    <Ionicons name="search-outline" size={s(20)} color={mau.chu_nhat} />
                     <TextInput
-                        style={[styles.searchInput, { color: mau.chu_chinh }]}
-                        placeholder="Tìm kiếm cây trồng..."
+                        style={[styles.searchInput, { color: mau.chu_chinh, fontSize: s(15) }]}
+                        placeholder={t('tv_timkiem')}
                         placeholderTextColor={mau.chu_nhat}
                         value={timKiem}
                         onChangeText={setTimKiem}
@@ -137,9 +140,9 @@ const ThuVienCayScreen: React.FC<Props> = ({ navigation }) => {
                 showsVerticalScrollIndicator={false}
                 ListEmptyComponent={
                     <View style={styles.emptyState}>
-                        <Text style={{ fontSize: 48 }}>🌱</Text>
-                        <Text style={[styles.emptyText, { color: mau.chu_nhat }]}>
-                            Không tìm thấy cây trồng
+                        <Text style={{ fontSize: s(48) }}>🌱</Text>
+                        <Text style={[styles.emptyText, { color: mau.chu_nhat, fontSize: s(16) }]}>
+                            {t('tv_khongtimthay')}
                         </Text>
                     </View>
                 }
@@ -176,13 +179,13 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     cardInfo: { flex: 1 },
-    cardName: { fontSize: 17, fontWeight: '700' },
-    cardSci: { fontSize: 13, fontStyle: 'italic', marginTop: 2 },
+    cardName: { fontWeight: '700' },
+    cardSci: { fontStyle: 'italic', marginTop: 2 },
     diseaseRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginTop: 6 },
     diseasePill: { paddingHorizontal: 8, paddingVertical: 3, borderRadius: 8 },
-    diseaseText: { fontSize: 11, fontWeight: '600' },
+    diseaseText: { fontWeight: '600' },
     emptyState: { alignItems: 'center', paddingTop: 60, gap: 12 },
-    emptyText: { fontSize: 16, fontWeight: '500' },
+    emptyText: { fontWeight: '500' },
 });
 
 export default ThuVienCayScreen;

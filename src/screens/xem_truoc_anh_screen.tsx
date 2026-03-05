@@ -11,6 +11,7 @@ import {
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
 import { useChuDe } from '../theme/chu_de';
+import { useNgonNgu, useCoChu } from '../utils/ngon_ngu';
 import NutBam from '../components/nut_bam';
 import TheThuyTinh from '../components/the_thuy_tinh';
 
@@ -23,6 +24,8 @@ interface Props {
 
 const XemTruocAnhScreen: React.FC<Props> = ({ navigation, route }) => {
     const { mau } = useChuDe();
+    const t = useNgonNgu();
+    const s = useCoChu();
     const imageUri = route.params?.imageUri;
 
     const handlePhanTich = () => {
@@ -34,9 +37,9 @@ const XemTruocAnhScreen: React.FC<Props> = ({ navigation, route }) => {
             {/* Header */}
             <View style={styles.header}>
                 <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
-                    <Ionicons name="arrow-back" size={22} color={mau.chu_chinh} />
+                    <Ionicons name="arrow-back" size={s(22)} color={mau.chu_chinh} />
                 </TouchableOpacity>
-                <Text style={[styles.title, { color: mau.chu_chinh }]}>Xác nhận ảnh</Text>
+                <Text style={[styles.title, { color: mau.chu_chinh, fontSize: s(18) }]}>{t('xta_tieude_chinh')}</Text>
                 <View style={{ width: 40 }} />
             </View>
 
@@ -47,9 +50,9 @@ const XemTruocAnhScreen: React.FC<Props> = ({ navigation, route }) => {
                 ) : (
                     <View style={[styles.image, styles.mockImage]}>
                         <View style={styles.mockLeafPattern}>
-                            <Text style={{ fontSize: 64 }}>🍃</Text>
+                            <Text style={{ fontSize: s(64) }}>🍃</Text>
                         </View>
-                        <Text style={[styles.mockText, { color: mau.chu_nhat }]}>Ảnh đã chụp</Text>
+                        <Text style={[styles.mockText, { color: mau.chu_nhat, fontSize: s(16) }]}>{t('xta_anhdachup')}</Text>
                     </View>
                 )}
             </Animated.View>
@@ -57,25 +60,25 @@ const XemTruocAnhScreen: React.FC<Props> = ({ navigation, route }) => {
             {/* Toolbar */}
             <Animated.View entering={FadeInDown.delay(200).duration(500)} style={styles.toolbar}>
                 <TouchableOpacity style={[styles.toolBtn, { backgroundColor: mau.nen_the }]}>
-                    <Ionicons name="crop-outline" size={22} color={mau.chu_chinh} />
-                    <Text style={[styles.toolText, { color: mau.chu_phu }]}>Cắt ✂️</Text>
+                    <Ionicons name="crop-outline" size={s(22)} color={mau.chu_chinh} />
+                    <Text style={[styles.toolText, { color: mau.chu_phu, fontSize: s(12) }]}>{t('xta_cat')}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={[styles.toolBtn, { backgroundColor: mau.nen_the }]}>
-                    <Ionicons name="refresh-outline" size={22} color={mau.chu_chinh} />
-                    <Text style={[styles.toolText, { color: mau.chu_phu }]}>Xoay 🔄</Text>
+                    <Ionicons name="refresh-outline" size={s(22)} color={mau.chu_chinh} />
+                    <Text style={[styles.toolText, { color: mau.chu_phu, fontSize: s(12) }]}>{t('xta_xoay')}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={[styles.toolBtn, { backgroundColor: mau.nen_the }]}>
-                    <Ionicons name="sunny-outline" size={22} color={mau.chu_chinh} />
-                    <Text style={[styles.toolText, { color: mau.chu_phu }]}>Sáng ☀️</Text>
+                    <Ionicons name="sunny-outline" size={s(22)} color={mau.chu_chinh} />
+                    <Text style={[styles.toolText, { color: mau.chu_phu, fontSize: s(12) }]}>{t('xta_sang')}</Text>
                 </TouchableOpacity>
             </Animated.View>
 
             {/* Tip */}
             <Animated.View entering={FadeInDown.delay(300).duration(500)}>
                 <TheThuyTinh style={styles.tipCard}>
-                    <Ionicons name="bulb-outline" size={18} color={mau.xanh_chinh} />
-                    <Text style={[styles.tipText, { color: mau.chu_phu }]}>
-                        Cắt sát vào vùng lá bị bệnh để tăng độ chính xác AI
+                    <Ionicons name="bulb-outline" size={s(18)} color={mau.xanh_chinh} />
+                    <Text style={[styles.tipText, { color: mau.chu_phu, fontSize: s(13) }]}>
+                        {t('xta_meo_cat')}
                     </Text>
                 </TheThuyTinh>
             </Animated.View>
@@ -83,14 +86,14 @@ const XemTruocAnhScreen: React.FC<Props> = ({ navigation, route }) => {
             {/* Bottom buttons */}
             <Animated.View entering={FadeInDown.delay(400).duration(500)} style={styles.bottomBtns}>
                 <NutBam
-                    tieu_de="Chụp lại"
+                    tieu_de={t('xta_nut_chulai')}
                     onPress={() => navigation.goBack()}
                     loai="vien"
-                    icon={<Ionicons name="camera-outline" size={20} color={mau.xanh_chinh} />}
+                    icon={<Ionicons name="camera-outline" size={s(20)} color={mau.xanh_chinh} />}
                     style={{ flex: 1 }}
                 />
                 <NutBam
-                    tieu_de="Phân tích ngay 🚀"
+                    tieu_de={t('xta_nut_phantich')}
                     onPress={handlePhanTich}
                     style={{ flex: 1.5 }}
                 />
@@ -115,7 +118,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
-    title: { fontSize: 18, fontWeight: '700' },
+    title: { fontWeight: '700' },
     imageWrap: {
         borderRadius: 20,
         overflow: 'hidden',
@@ -153,14 +156,14 @@ const styles = StyleSheet.create({
         borderRadius: 14,
         gap: 4,
     },
-    toolText: { fontSize: 12, fontWeight: '600' },
+    toolText: { fontWeight: '600' },
     tipCard: {
         flexDirection: 'row',
         alignItems: 'center',
         gap: 10,
         marginBottom: 20,
     },
-    tipText: { flex: 1, fontSize: 13, lineHeight: 18 },
+    tipText: { flex: 1, lineHeight: 18 },
     bottomBtns: {
         flexDirection: 'row',
         gap: 12,

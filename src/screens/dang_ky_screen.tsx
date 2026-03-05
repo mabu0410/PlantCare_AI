@@ -15,6 +15,7 @@ import Animated, { FadeInDown } from 'react-native-reanimated';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useChuDe } from '../theme/chu_de';
+import { useNgonNgu, useCoChu } from '../utils/ngon_ngu';
 import { useAuthStore } from '../store/auth_store';
 import NutBam from '../components/nut_bam';
 import TheThuyTinh from '../components/the_thuy_tinh';
@@ -25,6 +26,8 @@ interface Props {
 
 const DangKyScreen: React.FC<Props> = ({ navigation }) => {
     const { mau } = useChuDe();
+    const t = useNgonNgu();
+    const s = useCoChu();
     const [ten, setTen] = useState('');
     const [email, setEmail] = useState('');
     const [matKhau, setMatKhau] = useState('');
@@ -53,20 +56,20 @@ const DangKyScreen: React.FC<Props> = ({ navigation }) => {
                     keyboardShouldPersistTaps="handled"
                 >
                     <Animated.View entering={FadeInDown.delay(100).duration(500)} style={styles.header}>
-                        <Text style={styles.title}>Tạo tài khoản 🌱</Text>
-                        <Text style={styles.subtitle}>Bắt đầu bảo vệ cây trồng của bạn</Text>
+                        <Text style={[styles.title, { fontSize: s(28) }]}>{t('dk_taotaikhoan')}</Text>
+                        <Text style={[styles.subtitle, { fontSize: s(16) }]}>{t('dk_batdaubaove')}</Text>
                     </Animated.View>
 
                     <Animated.View entering={FadeInDown.delay(300).duration(500)}>
                         <TheThuyTinh style={styles.formCard}>
                             {/* Full name */}
                             <View style={styles.inputGroup}>
-                                <Text style={[styles.label, { color: mau.chu_phu }]}>Họ và tên</Text>
+                                <Text style={[styles.label, { color: mau.chu_phu, fontSize: s(14) }]}>{t('dk_hovaten_label')}</Text>
                                 <View style={[styles.inputWrap, { borderColor: mau.vien, backgroundColor: mau.nen }]}>
-                                    <Ionicons name="person-outline" size={20} color={mau.chu_nhat} />
+                                    <Ionicons name="person-outline" size={s(20)} color={mau.chu_nhat} />
                                     <TextInput
-                                        style={[styles.input, { color: mau.chu_chinh }]}
-                                        placeholder="Nguyễn Văn A"
+                                        style={[styles.input, { color: mau.chu_chinh, fontSize: s(15) }]}
+                                        placeholder={t('dk_hovaten_placeholder')}
                                         placeholderTextColor={mau.chu_nhat}
                                         value={ten}
                                         onChangeText={setTen}
@@ -76,12 +79,12 @@ const DangKyScreen: React.FC<Props> = ({ navigation }) => {
 
                             {/* Email */}
                             <View style={styles.inputGroup}>
-                                <Text style={[styles.label, { color: mau.chu_phu }]}>Email</Text>
+                                <Text style={[styles.label, { color: mau.chu_phu, fontSize: s(14) }]}>{t('dk_email_label')}</Text>
                                 <View style={[styles.inputWrap, { borderColor: mau.vien, backgroundColor: mau.nen }]}>
-                                    <Ionicons name="mail-outline" size={20} color={mau.chu_nhat} />
+                                    <Ionicons name="mail-outline" size={s(20)} color={mau.chu_nhat} />
                                     <TextInput
-                                        style={[styles.input, { color: mau.chu_chinh }]}
-                                        placeholder="email@example.com"
+                                        style={[styles.input, { color: mau.chu_chinh, fontSize: s(15) }]}
+                                        placeholder={t('dk_email_placeholder')}
                                         placeholderTextColor={mau.chu_nhat}
                                         value={email}
                                         onChangeText={setEmail}
@@ -93,12 +96,12 @@ const DangKyScreen: React.FC<Props> = ({ navigation }) => {
 
                             {/* Password */}
                             <View style={styles.inputGroup}>
-                                <Text style={[styles.label, { color: mau.chu_phu }]}>Mật khẩu</Text>
+                                <Text style={[styles.label, { color: mau.chu_phu, fontSize: s(14) }]}>{t('dk_matkhau_label')}</Text>
                                 <View style={[styles.inputWrap, { borderColor: mau.vien, backgroundColor: mau.nen }]}>
-                                    <Ionicons name="lock-closed-outline" size={20} color={mau.chu_nhat} />
+                                    <Ionicons name="lock-closed-outline" size={s(20)} color={mau.chu_nhat} />
                                     <TextInput
-                                        style={[styles.input, { color: mau.chu_chinh }]}
-                                        placeholder="Tối thiểu 6 ký tự"
+                                        style={[styles.input, { color: mau.chu_chinh, fontSize: s(15) }]}
+                                        placeholder={t('dk_matkhau_placeholder_min')}
                                         placeholderTextColor={mau.chu_nhat}
                                         value={matKhau}
                                         onChangeText={setMatKhau}
@@ -108,7 +111,7 @@ const DangKyScreen: React.FC<Props> = ({ navigation }) => {
                             </View>
 
                             <NutBam
-                                tieu_de={dang_tai ? 'Đang tạo...' : 'Đăng ký'}
+                                tieu_de={dang_tai ? t('dk_dang_tao') : t('dk_dangky')}
                                 onPress={handleDangKy}
                                 disabled={dang_tai || !ten || !email || !matKhau}
                                 fullWidth
@@ -116,7 +119,7 @@ const DangKyScreen: React.FC<Props> = ({ navigation }) => {
                                     dang_tai ? (
                                         <ActivityIndicator size="small" color="#FFF" />
                                     ) : (
-                                        <Ionicons name="person-add-outline" size={20} color="#FFF" />
+                                        <Ionicons name="person-add-outline" size={s(20)} color="#FFF" />
                                     )
                                 }
                             />
@@ -124,12 +127,12 @@ const DangKyScreen: React.FC<Props> = ({ navigation }) => {
                     </Animated.View>
 
                     <Animated.View entering={FadeInDown.delay(500).duration(500)} style={styles.loginRow}>
-                        <Text style={[styles.loginText, { color: mau.chu_phu }]}>
-                            Đã có tài khoản?{' '}
+                        <Text style={[styles.loginText, { color: mau.chu_phu, fontSize: s(15) }]}>
+                            {t('dk_dacotaikhoan')}
                         </Text>
                         <TouchableOpacity onPress={() => navigation.goBack()}>
-                            <Text style={[styles.loginLink, { color: mau.xanh_nhat }]}>
-                                Đăng nhập
+                            <Text style={[styles.loginLink, { color: mau.xanh_nhat, fontSize: s(15) }]}>
+                                {t('dk_dangnhap')}
                             </Text>
                         </TouchableOpacity>
                     </Animated.View>
@@ -148,11 +151,11 @@ const styles = StyleSheet.create({
         paddingVertical: 60,
     },
     header: { alignItems: 'center', marginBottom: 32 },
-    title: { fontSize: 28, fontWeight: '800', color: '#FFF', marginBottom: 6 },
-    subtitle: { fontSize: 16, color: 'rgba(255,255,255,0.7)' },
+    title: { fontWeight: '800', color: '#FFF', marginBottom: 6 },
+    subtitle: { color: 'rgba(255,255,255,0.7)' },
     formCard: { marginBottom: 20 },
     inputGroup: { marginBottom: 18 },
-    label: { fontSize: 14, fontWeight: '600', marginBottom: 8 },
+    label: { fontWeight: '600', marginBottom: 8 },
     inputWrap: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -162,10 +165,10 @@ const styles = StyleSheet.create({
         height: 52,
         gap: 10,
     },
-    input: { flex: 1, fontSize: 15, fontWeight: '500' },
+    input: { flex: 1, fontWeight: '500' },
     loginRow: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center' },
-    loginText: { fontSize: 15 },
-    loginLink: { fontSize: 15, fontWeight: '700' },
+    loginText: {},
+    loginLink: { fontWeight: '700' },
 });
 
 export default DangKyScreen;

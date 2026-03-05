@@ -9,6 +9,7 @@ import Animated, {
     withSpring,
 } from 'react-native-reanimated';
 import { useChuDe } from '../theme/chu_de';
+import { useNgonNgu, useCoChu } from '../utils/ngon_ngu';
 
 import TrangChuScreen from '../screens/trang_chu_screen';
 import LichSuScreen from '../screens/lich_su_screen';
@@ -33,7 +34,10 @@ const TabIcon: React.FC<{
             <Text
                 style={[
                     styles.tabLabel,
-                    { color, fontWeight: focused ? '700' : '500' },
+                    {
+                        color,
+                        fontWeight: focused ? '700' : '500',
+                    },
                 ]}
             >
                 {label}
@@ -45,6 +49,8 @@ const TabIcon: React.FC<{
 
 const DieuHuongTab: React.FC = () => {
     const { mau, laToi } = useChuDe();
+    const t = useNgonNgu();
+    const s = useCoChu();
 
     return (
         <Tab.Navigator
@@ -73,7 +79,7 @@ const DieuHuongTab: React.FC = () => {
                         <TabIcon
                             focused={focused}
                             iconName={focused ? 'home' : 'home-outline'}
-                            label="Trang chủ"
+                            label={t('tab_trangchu')}
                             color={focused ? mau.xanh_chinh : mau.chu_nhat}
                         />
                     ),
@@ -87,7 +93,7 @@ const DieuHuongTab: React.FC = () => {
                         <TabIcon
                             focused={focused}
                             iconName={focused ? 'time' : 'time-outline'}
-                            label="Lịch sử"
+                            label={t('tab_lichsu')}
                             color={focused ? mau.xanh_chinh : mau.chu_nhat}
                         />
                     ),
@@ -101,7 +107,7 @@ const DieuHuongTab: React.FC = () => {
                         <TabIcon
                             focused={focused}
                             iconName={focused ? 'library' : 'library-outline'}
-                            label="Thư viện"
+                            label={t('tab_thuvien')}
                             color={focused ? mau.xanh_chinh : mau.chu_nhat}
                         />
                     ),
@@ -115,7 +121,7 @@ const DieuHuongTab: React.FC = () => {
                         <TabIcon
                             focused={focused}
                             iconName={focused ? 'person' : 'person-outline'}
-                            label="Tài khoản"
+                            label={t('tab_taikhoan')}
                             color={focused ? mau.xanh_chinh : mau.chu_nhat}
                         />
                     ),

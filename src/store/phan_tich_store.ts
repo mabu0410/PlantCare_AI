@@ -14,6 +14,9 @@ interface PhanTichState {
     batDauPhanTich: (anhUri: string) => Promise<KetQuaPhanTich>;
     xoaLichSu: (id: string) => void;
     xoaTatCa: () => void;
+    da_luu_ids: string[];
+    luuKetQua: (id: string) => void;
+    boLuuKetQua: (id: string) => void;
 }
 
 export const usePhanTichStore = create<PhanTichState>((set, get) => ({
@@ -22,6 +25,7 @@ export const usePhanTichStore = create<PhanTichState>((set, get) => ({
     thong_ke: THONG_KE_MAU,
     dang_phan_tich: false,
     anh_chup: null,
+    da_luu_ids: [LICH_SU_MAU[0]?.id].filter(Boolean) as string[], // Mock id đầu tiên được lưu
 
     datAnhChup: (uri: string) => {
         set({ anh_chup: uri });
@@ -81,6 +85,26 @@ export const usePhanTichStore = create<PhanTichState>((set, get) => ({
     },
 
     xoaTatCa: () => {
-        set({ lich_su: [], thong_ke: { so_lan_phan_tich: 0, so_benh_phat_hien: 0, so_cay_da_luu: 0 } });
+        set({ lich_su: [], thong_ke: { so_lan_phan_tich: 0, so_benh_phat_hien: 0, so_cay_da_luu: 0 }, da_luu_ids: [] });
+    },
+
+    luuKetQua: (id: string) => {
+        set(state => {
+            if (state.da_luu_ids.includes(id)) return state;
+            return {
+                da_luu_ids: [...state.da_luu_ids, id],
+                thong_ke: { ...state.thong_ke, so_cay_da_luu: state.thong_ke.so_cay_da_luu + 1 },
+            };
+        });
+    },
+
+    boLuuKetQua: (id: string) => {
+        set(state => {
+            if (!state.da_luu_ids.includes(id)) return state;
+            return {
+                da_luu_ids: state.da_luu_ids.filter(itemId => itemId !== id),
+                thong_ke: { ...state.thong_ke, so_cay_da_luu: Math.max(0, state.thong_ke.so_cay_da_luu - 1) },
+            };
+        });
     },
 }));

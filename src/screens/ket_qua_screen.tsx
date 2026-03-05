@@ -23,6 +23,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
 import { useChuDe } from '../theme/chu_de';
+import { useNgonNgu, useCoChu } from '../utils/ngon_ngu';
 import { usePhanTichStore } from '../store/phan_tich_store';
 import TheThuyTinh from '../components/the_thuy_tinh';
 import ThanhTienTrinh from '../components/thanh_tien_trinh';
@@ -37,6 +38,8 @@ interface Props {
 
 const KetQuaScreen: React.FC<Props> = ({ navigation, route }) => {
     const { mau } = useChuDe();
+    const t = useNgonNgu();
+    const s = useCoChu();
     const { batDauPhanTich, ket_qua_hien_tai, dang_phan_tich } = usePhanTichStore();
     const [ketQua, setKetQua] = useState<KetQuaPhanTich | null>(route.params?.ketQua || null);
     const [activeTab, setActiveTab] = useState(0);
@@ -44,7 +47,7 @@ const KetQuaScreen: React.FC<Props> = ({ navigation, route }) => {
     const imageUri = route.params?.imageUri;
 
     // Loading animation
-    const [loadingText, setLoadingText] = useState('Đang xử lý hình ảnh...');
+    const [loadingText, setLoadingText] = useState(t('kq_dang_xuly'));
     const scanLineY = useSharedValue(0);
     const progressWidth = useSharedValue(0);
 
@@ -54,10 +57,10 @@ const KetQuaScreen: React.FC<Props> = ({ navigation, route }) => {
             scanLineY.value = withRepeat(withTiming(1, { duration: 2000 }), -1, true);
 
             const texts = [
-                'Đang xử lý hình ảnh...',
-                'Trích xuất đặc điểm bệnh lý...',
-                'Đối chiếu cơ sở dữ liệu...',
-                'Hoàn thiện kết quả...',
+                t('kq_dang_xuly'),
+                t('kq_trich_xuat'),
+                t('kq_doi_chieu'),
+                t('kq_hoan_thien'),
             ];
             let i = 0;
             const interval = setInterval(() => {
@@ -100,7 +103,7 @@ const KetQuaScreen: React.FC<Props> = ({ navigation, route }) => {
 
                 <TheThuyTinh style={styles.loadingCard}>
                     <ActivityIndicator size="large" color={mau.xanh_chinh} />
-                    <Text style={[styles.loadingText, { color: mau.chu_chinh }]}>{loadingText}</Text>
+                    <Text style={[styles.loadingText, { color: mau.chu_chinh, fontSize: s(15) }]}>{loadingText}</Text>
                     <View style={[styles.loadingTrack, { backgroundColor: mau.vien }]}>
                         <Animated.View style={[styles.loadingFill, { backgroundColor: mau.xanh_chinh }, progStyle]} />
                     </View>
@@ -109,11 +112,20 @@ const KetQuaScreen: React.FC<Props> = ({ navigation, route }) => {
         );
     }
 
-    const tabs = ['Triệu chứng', 'Điều trị', 'Phòng ngừa'];
+    const tabs = [t('kq_tab_trieuchung'), t('kq_tab_dieutri'), t('kq_tab_phongngua')];
     const tabContent = [ketQua.trieu_chung, ketQua.dieu_tri, ketQua.phong_ngua];
 
     return (
         <SafeAreaView style={[styles.safeArea, { backgroundColor: mau.nen }]}>
+            {/* Header / Nút Back */}
+            <View style={styles.header}>
+                <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+                    <Ionicons name="arrow-back" size={s(24)} color={mau.chu_chinh} />
+                </TouchableOpacity>
+                <Text style={[styles.headerTitle, { color: mau.chu_chinh, fontSize: s(18) }]}>{t('kq_tieude_chinh')}</Text>
+                <View style={{ width: 40 }} />
+            </View>
+
             <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
                 {/* Image with bounding box */}
                 <Animated.View entering={FadeInDown.duration(500)} style={styles.imageSection}>
@@ -132,17 +144,17 @@ const KetQuaScreen: React.FC<Props> = ({ navigation, route }) => {
                 <Animated.View entering={FadeInUp.delay(200).duration(600)}>
                     <TheThuyTinh style={styles.resultCard}>
                         {/* Disease name */}
-                        <Text style={[styles.diseaseName, { color: mau.chu_chinh }]}>
+                        <Text style={[styles.diseaseName, { color: mau.chu_chinh, fontSize: s(22) }]}>
                             🍅 {ketQua.ten_benh}
                         </Text>
                         {ketQua.ten_khoa_hoc ? (
-                            <Text style={[styles.sciName, { color: mau.chu_phu }]}>
+                            <Text style={[styles.sciName, { color: mau.chu_phu, fontSize: s(14) }]}>
                                 {ketQua.ten_khoa_hoc}
                             </Text>
                         ) : null}
 
                         {/* Confidence */}
-                        <ThanhTienTrinh gia_tri={ketQua.do_chinh_xac} label="Độ chính xác" />
+                        <ThanhTienTrinh gia_tri={ketQua.do_chinh_xac} label={t('kq_do_chinh_xac')} />
 
                         {/* Severity badge */}
                         <View
@@ -151,14 +163,14 @@ const KetQuaScreen: React.FC<Props> = ({ navigation, route }) => {
                                 { backgroundColor: mauMucDo(ketQua.muc_do, mau) + '18' },
                             ]}
                         >
-                            <Text style={{ fontSize: 14 }}>⚠️</Text>
-                            <Text style={[styles.severityText, { color: mauMucDo(ketQua.muc_do, mau) }]}>
-                                Mức độ: {tenMucDo(ketQua.muc_do)}
+                            <Text style={{ fontSize: s(14) }}>⚠️</Text>
+                            <Text style={[styles.severityText, { color: mauMucDo(ketQua.muc_do, mau), fontSize: s(13) }]}>
+                                {t('kq_muc_do')}: {tenMucDo(ketQua.muc_do, t)}
                             </Text>
                         </View>
 
                         {/* Description */}
-                        <Text style={[styles.description, { color: mau.chu_phu }]}>{ketQua.mo_ta}</Text>
+                        <Text style={[styles.description, { color: mau.chu_phu, fontSize: s(14) }]}>{ketQua.mo_ta}</Text>
                     </TheThuyTinh>
                 </Animated.View>
 
@@ -180,7 +192,7 @@ const KetQuaScreen: React.FC<Props> = ({ navigation, route }) => {
                                 <Text
                                     style={[
                                         styles.tabText,
-                                        { color: activeTab === idx ? mau.xanh_chinh : mau.chu_nhat },
+                                        { color: activeTab === idx ? mau.xanh_chinh : mau.chu_nhat, fontSize: s(14) },
                                     ]}
                                 >
                                     {tab}
@@ -195,14 +207,14 @@ const KetQuaScreen: React.FC<Props> = ({ navigation, route }) => {
                             tabContent[activeTab].map((item, idx) => (
                                 <View key={idx} style={[styles.listItem, { borderLeftColor: mau.xanh_chinh }]}>
                                     <View style={[styles.listBullet, { backgroundColor: mau.xanh_chinh }]}>
-                                        <Text style={styles.bulletText}>{idx + 1}</Text>
+                                        <Text style={[styles.bulletText, { fontSize: s(12) }]}>{idx + 1}</Text>
                                     </View>
-                                    <Text style={[styles.listText, { color: mau.chu_chinh }]}>{item}</Text>
+                                    <Text style={[styles.listText, { color: mau.chu_chinh, fontSize: s(14) }]}>{item}</Text>
                                 </View>
                             ))
                         ) : (
-                            <Text style={[styles.emptyText, { color: mau.chu_nhat }]}>
-                                Không phát hiện triệu chứng bất thường ✅
+                            <Text style={[styles.emptyText, { color: mau.chu_nhat, fontSize: s(14) }]}>
+                                {t('kq_trong')}
                             </Text>
                         )}
                     </View>
@@ -211,19 +223,19 @@ const KetQuaScreen: React.FC<Props> = ({ navigation, route }) => {
                 {/* Action buttons */}
                 <Animated.View entering={FadeInUp.delay(600).duration(500)} style={styles.actions}>
                     <NutBam
-                        tieu_de="💾 Lưu"
+                        tieu_de={t('kq_nut_luu')}
                         onPress={() => { }}
                         loai="vien"
                         style={{ flex: 1 }}
                     />
                     <NutBam
-                        tieu_de="📤 Chia sẻ"
+                        tieu_de={t('kq_nut_chia_se')}
                         onPress={() => { }}
                         loai="vien"
                         style={{ flex: 1 }}
                     />
                     <NutBam
-                        tieu_de="🔄 Quét lại"
+                        tieu_de={t('kq_nut_quet_lai')}
                         onPress={() => navigation.navigate('Camera')}
                         style={{ flex: 1 }}
                     />
@@ -235,6 +247,25 @@ const KetQuaScreen: React.FC<Props> = ({ navigation, route }) => {
 
 const styles = StyleSheet.create({
     safeArea: { flex: 1 },
+    header: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        paddingHorizontal: 20,
+        height: 56,
+        zIndex: 10,
+    },
+    backButton: {
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(255,255,255,0.05)',
+    },
+    headerTitle: {
+        fontWeight: '700',
+    },
     scrollContent: { paddingBottom: 100 },
     // Loading
     loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
@@ -263,13 +294,13 @@ const styles = StyleSheet.create({
         gap: 16,
         padding: 28,
     },
-    loadingText: { fontSize: 15, fontWeight: '600', textAlign: 'center' },
+    loadingText: { fontWeight: '600', textAlign: 'center' },
     loadingTrack: { width: '100%', height: 6, borderRadius: 3, overflow: 'hidden' },
     loadingFill: { height: '100%', borderRadius: 3 },
     // Result
     imageSection: {
         marginHorizontal: 20,
-        marginTop: 60,
+        marginTop: 16,
         marginBottom: 16,
         borderRadius: 20,
         overflow: 'hidden',
@@ -296,8 +327,8 @@ const styles = StyleSheet.create({
         borderStyle: 'dashed',
     },
     resultCard: { marginHorizontal: 20, marginBottom: 16 },
-    diseaseName: { fontSize: 22, fontWeight: '800', marginBottom: 4 },
-    sciName: { fontSize: 14, fontStyle: 'italic', marginBottom: 8 },
+    diseaseName: { fontWeight: '800', marginBottom: 4 },
+    sciName: { fontStyle: 'italic', marginBottom: 8 },
     severityBadge: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -308,8 +339,8 @@ const styles = StyleSheet.create({
         gap: 6,
         marginVertical: 8,
     },
-    severityText: { fontSize: 13, fontWeight: '700' },
-    description: { fontSize: 14, lineHeight: 22, marginTop: 8 },
+    severityText: { fontWeight: '700' },
+    description: { lineHeight: 22, marginTop: 8 },
     // Tabs
     tabBar: {
         flexDirection: 'row',
@@ -319,7 +350,7 @@ const styles = StyleSheet.create({
         marginBottom: 16,
     },
     tab: { flex: 1, paddingVertical: 12, alignItems: 'center' },
-    tabText: { fontSize: 14, fontWeight: '700' },
+    tabText: { fontWeight: '700' },
     tabContent: { paddingHorizontal: 20, marginBottom: 20 },
     listItem: {
         flexDirection: 'row',
@@ -336,9 +367,9 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
-    bulletText: { color: '#FFF', fontSize: 12, fontWeight: '700' },
-    listText: { flex: 1, fontSize: 14, lineHeight: 22 },
-    emptyText: { fontSize: 14, textAlign: 'center', paddingVertical: 20 },
+    bulletText: { color: '#FFF', fontWeight: '700' },
+    listText: { flex: 1, lineHeight: 22 },
+    emptyText: { textAlign: 'center', paddingVertical: 20 },
     actions: {
         flexDirection: 'row',
         gap: 10,

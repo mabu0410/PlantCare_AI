@@ -15,6 +15,7 @@ import Animated, { FadeInDown } from 'react-native-reanimated';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useChuDe } from '../theme/chu_de';
+import { useNgonNgu, useCoChu } from '../utils/ngon_ngu';
 import { useAuthStore } from '../store/auth_store';
 import NutBam from '../components/nut_bam';
 import TheThuyTinh from '../components/the_thuy_tinh';
@@ -25,6 +26,8 @@ interface Props {
 
 const DangNhapScreen: React.FC<Props> = ({ navigation }) => {
     const { mau } = useChuDe();
+    const t = useNgonNgu();
+    const s = useCoChu();
     const [email, setEmail] = useState('');
     const [matKhau, setMatKhau] = useState('');
     const [hienMatKhau, setHienMatKhau] = useState(false);
@@ -57,22 +60,22 @@ const DangNhapScreen: React.FC<Props> = ({ navigation }) => {
                     {/* Header */}
                     <Animated.View entering={FadeInDown.delay(100).duration(500)} style={styles.header}>
                         <View style={styles.logoSmall}>
-                            <Ionicons name="leaf" size={32} color={mau.xanh_chinh} />
+                            <Ionicons name="leaf" size={s(32)} color={mau.xanh_chinh} />
                         </View>
-                        <Text style={styles.welcomeText}>Chào mừng trở lại!</Text>
-                        <Text style={styles.welcomeSub}>Đăng nhập để tiếp tục</Text>
+                        <Text style={[styles.welcomeText, { fontSize: s(28) }]}>{t('dn_chaomung')}</Text>
+                        <Text style={[styles.welcomeSub, { fontSize: s(16) }]}>{t('dn_tieptheo')}</Text>
                     </Animated.View>
 
                     {/* Form */}
                     <Animated.View entering={FadeInDown.delay(300).duration(500)}>
                         <TheThuyTinh style={styles.formCard}>
                             <View style={styles.inputGroup}>
-                                <Text style={[styles.label, { color: mau.chu_phu }]}>Email</Text>
+                                <Text style={[styles.label, { color: mau.chu_phu, fontSize: s(14) }]}>{t('dn_email_label')}</Text>
                                 <View style={[styles.inputWrap, { borderColor: mau.vien, backgroundColor: mau.nen }]}>
-                                    <Ionicons name="mail-outline" size={20} color={mau.chu_nhat} />
+                                    <Ionicons name="mail-outline" size={s(20)} color={mau.chu_nhat} />
                                     <TextInput
-                                        style={[styles.input, { color: mau.chu_chinh }]}
-                                        placeholder="email@example.com"
+                                        style={[styles.input, { color: mau.chu_chinh, fontSize: s(15) }]}
+                                        placeholder={t('dn_email_placeholder')}
                                         placeholderTextColor={mau.chu_nhat}
                                         value={email}
                                         onChangeText={setEmail}
@@ -83,12 +86,12 @@ const DangNhapScreen: React.FC<Props> = ({ navigation }) => {
                             </View>
 
                             <View style={styles.inputGroup}>
-                                <Text style={[styles.label, { color: mau.chu_phu }]}>Mật khẩu</Text>
+                                <Text style={[styles.label, { color: mau.chu_phu, fontSize: s(14) }]}>{t('dn_matkhau_label')}</Text>
                                 <View style={[styles.inputWrap, { borderColor: mau.vien, backgroundColor: mau.nen }]}>
-                                    <Ionicons name="lock-closed-outline" size={20} color={mau.chu_nhat} />
+                                    <Ionicons name="lock-closed-outline" size={s(20)} color={mau.chu_nhat} />
                                     <TextInput
-                                        style={[styles.input, { color: mau.chu_chinh }]}
-                                        placeholder="••••••••"
+                                        style={[styles.input, { color: mau.chu_chinh, fontSize: s(15) }]}
+                                        placeholder={t('dn_matkhau_placeholder')}
                                         placeholderTextColor={mau.chu_nhat}
                                         value={matKhau}
                                         onChangeText={setMatKhau}
@@ -97,7 +100,7 @@ const DangNhapScreen: React.FC<Props> = ({ navigation }) => {
                                     <TouchableOpacity onPress={() => setHienMatKhau(!hienMatKhau)}>
                                         <Ionicons
                                             name={hienMatKhau ? 'eye-off-outline' : 'eye-outline'}
-                                            size={20}
+                                            size={s(20)}
                                             color={mau.chu_nhat}
                                         />
                                     </TouchableOpacity>
@@ -105,13 +108,13 @@ const DangNhapScreen: React.FC<Props> = ({ navigation }) => {
                             </View>
 
                             <TouchableOpacity style={styles.forgotBtn}>
-                                <Text style={[styles.forgotText, { color: mau.xanh_chinh }]}>
-                                    Quên mật khẩu?
+                                <Text style={[styles.forgotText, { color: mau.xanh_chinh, fontSize: s(14) }]}>
+                                    {t('dn_quenmatkhau')}
                                 </Text>
                             </TouchableOpacity>
 
                             <NutBam
-                                tieu_de={dang_tai ? 'Đang đăng nhập...' : 'Đăng nhập'}
+                                tieu_de={dang_tai ? t('dn_dang_dangnhap') : t('dn_dangnhap')}
                                 onPress={handleDangNhap}
                                 disabled={dang_tai || !email || !matKhau}
                                 fullWidth
@@ -119,7 +122,7 @@ const DangNhapScreen: React.FC<Props> = ({ navigation }) => {
                                     dang_tai ? (
                                         <ActivityIndicator size="small" color="#FFF" />
                                     ) : (
-                                        <Ionicons name="log-in-outline" size={20} color="#FFF" />
+                                        <Ionicons name="log-in-outline" size={s(20)} color="#FFF" />
                                     )
                                 }
                             />
@@ -128,12 +131,12 @@ const DangNhapScreen: React.FC<Props> = ({ navigation }) => {
 
                     {/* Register link */}
                     <Animated.View entering={FadeInDown.delay(500).duration(500)} style={styles.registerRow}>
-                        <Text style={[styles.registerText, { color: mau.chu_phu }]}>
-                            Chưa có tài khoản?{' '}
+                        <Text style={[styles.registerText, { color: mau.chu_phu, fontSize: s(15) }]}>
+                            {t('dn_chuacotaikhoan')}
                         </Text>
                         <TouchableOpacity onPress={() => navigation.navigate('DangKy')}>
-                            <Text style={[styles.registerLink, { color: mau.xanh_nhat }]}>
-                                Đăng ký ngay
+                            <Text style={[styles.registerLink, { color: mau.xanh_nhat, fontSize: s(15) }]}>
+                                {t('dn_dangkyngay')}
                             </Text>
                         </TouchableOpacity>
                     </Animated.View>
@@ -144,8 +147,8 @@ const DangNhapScreen: React.FC<Props> = ({ navigation }) => {
                             style={styles.skipBtn}
                             onPress={() => navigation.replace('TabChinh')}
                         >
-                            <Text style={[styles.skipText, { color: mau.chu_nhat }]}>
-                                Bỏ qua đăng nhập →
+                            <Text style={[styles.skipText, { color: mau.chu_nhat, fontSize: s(14) }]}>
+                                {t('dn_boqua')}
                             </Text>
                         </TouchableOpacity>
                     </Animated.View>
@@ -185,13 +188,11 @@ const styles = StyleSheet.create({
         elevation: 8,
     },
     welcomeText: {
-        fontSize: 28,
         fontWeight: '800',
         color: '#FFFFFF',
         marginBottom: 6,
     },
     welcomeSub: {
-        fontSize: 16,
         color: 'rgba(255,255,255,0.7)',
     },
     formCard: {
@@ -201,7 +202,6 @@ const styles = StyleSheet.create({
         marginBottom: 18,
     },
     label: {
-        fontSize: 14,
         fontWeight: '600',
         marginBottom: 8,
     },
@@ -216,7 +216,6 @@ const styles = StyleSheet.create({
     },
     input: {
         flex: 1,
-        fontSize: 15,
         fontWeight: '500',
     },
     forgotBtn: {
@@ -224,7 +223,6 @@ const styles = StyleSheet.create({
         marginBottom: 24,
     },
     forgotText: {
-        fontSize: 14,
         fontWeight: '600',
     },
     registerRow: {
@@ -233,10 +231,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     registerText: {
-        fontSize: 15,
     },
     registerLink: {
-        fontSize: 15,
         fontWeight: '700',
     },
     skipBtn: {
@@ -245,7 +241,6 @@ const styles = StyleSheet.create({
         padding: 12,
     },
     skipText: {
-        fontSize: 14,
         fontWeight: '500',
     },
 });

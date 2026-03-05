@@ -12,6 +12,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useChuDe } from '../theme/chu_de';
 import TheThuyTinh from '../components/the_thuy_tinh';
+import { useNgonNgu, useCoChu } from '../utils/ngon_ngu';
 
 interface Props {
     navigation: any;
@@ -22,6 +23,8 @@ const ChiTietBenhScreen: React.FC<Props> = ({ navigation, route }) => {
     const { mau } = useChuDe();
     const cay = route.params?.cay;
     const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({});
+    const t = useNgonNgu();
+    const s = useCoChu();
 
     const toggleSection = (key: string) => {
         setExpandedSections(prev => ({ ...prev, [key]: !prev[key] }));
@@ -30,8 +33,8 @@ const ChiTietBenhScreen: React.FC<Props> = ({ navigation, route }) => {
     if (!cay) {
         return (
             <View style={[styles.empty, { backgroundColor: mau.nen }]}>
-                <Text style={[styles.emptyText, { color: mau.chu_chinh }]}>
-                    Không tìm thấy dữ liệu
+                <Text style={[styles.emptyText, { color: mau.chu_chinh, fontSize: s(16) }]}>
+                    {t('ctb_khongtimthay')}
                 </Text>
             </View>
         );
@@ -40,30 +43,28 @@ const ChiTietBenhScreen: React.FC<Props> = ({ navigation, route }) => {
     const sections = [
         {
             key: 'mota',
-            title: '📝 Mô tả',
+            title: t('ctb_mota'),
             icon: 'document-text-outline',
             content: cay.mo_ta,
         },
         {
             key: 'benh',
-            title: '🦠 Bệnh thường gặp',
+            title: t('ctb_benhthuonggap'),
             icon: 'bug-outline',
             isList: true,
             items: cay.benh_thuong_gap,
         },
         {
             key: 'cham_soc',
-            title: '🌱 Hướng dẫn chăm sóc',
+            title: t('ctb_huongdanchamsoc'),
             icon: 'water-outline',
-            content:
-                'Tưới nước đều đặn, bón phân NPK định kỳ 2 tuần/lần. Đảm bảo thoáng khí tốt và đủ ánh sáng. Kiểm tra sâu bệnh thường xuyên.',
+            content: t('ctb_hdcs_chitiet'),
         },
         {
             key: 'mua_vu',
-            title: '📅 Mùa vụ',
+            title: t('ctb_muavu'),
             icon: 'calendar-outline',
-            content:
-                'Có thể trồng quanh năm ở vùng nhiệt đới. Mùa chính: tháng 2-5 và tháng 8-11. Tránh trồng trong mùa mưa lớn.',
+            content: t('ctb_muavu_chitiet'),
         },
     ];
 
@@ -83,9 +84,9 @@ const ChiTietBenhScreen: React.FC<Props> = ({ navigation, route }) => {
                 </TouchableOpacity>
 
                 <Animated.View entering={FadeInDown.duration(500)} style={styles.headerContent}>
-                    <Text style={styles.headerIcon}>{cay.icon}</Text>
-                    <Text style={styles.headerName}>{cay.ten}</Text>
-                    <Text style={styles.headerSci}>{cay.ten_khoa_hoc}</Text>
+                    <Text style={[styles.headerIcon, { fontSize: s(64) }]}>{cay.icon}</Text>
+                    <Text style={[styles.headerName, { fontSize: s(28) }]}>{cay.ten}</Text>
+                    <Text style={[styles.headerSci, { fontSize: s(15) }]}>{cay.ten_khoa_hoc}</Text>
                 </Animated.View>
 
                 {/* Decorative */}
@@ -110,7 +111,7 @@ const ChiTietBenhScreen: React.FC<Props> = ({ navigation, route }) => {
                         >
                             <TheThuyTinh style={styles.sectionCard}>
                                 <View style={styles.sectionHeader}>
-                                    <Text style={[styles.sectionTitle, { color: mau.chu_chinh }]}>
+                                    <Text style={[styles.sectionTitle, { color: mau.chu_chinh, fontSize: s(16) }]}>
                                         {section.title}
                                     </Text>
                                     <Ionicons
@@ -126,13 +127,13 @@ const ChiTietBenhScreen: React.FC<Props> = ({ navigation, route }) => {
                                             section.items.map((item: string, i: number) => (
                                                 <View key={i} style={styles.listItem}>
                                                     <View style={[styles.bullet, { backgroundColor: mau.xanh_chinh }]} />
-                                                    <Text style={[styles.listText, { color: mau.chu_phu }]}>
+                                                    <Text style={[styles.listText, { color: mau.chu_phu, fontSize: s(14) }]}>
                                                         {item}
                                                     </Text>
                                                 </View>
                                             ))
                                         ) : (
-                                            <Text style={[styles.contentText, { color: mau.chu_phu }]}>
+                                            <Text style={[styles.contentText, { color: mau.chu_phu, fontSize: s(14) }]}>
                                                 {section.content}
                                             </Text>
                                         )}
@@ -149,8 +150,8 @@ const ChiTietBenhScreen: React.FC<Props> = ({ navigation, route }) => {
                         style={[styles.scanBtn, { backgroundColor: mau.xanh_chinh }]}
                         onPress={() => navigation.navigate('Camera')}
                     >
-                        <Ionicons name="scan-outline" size={20} color="#FFF" />
-                        <Text style={styles.scanBtnText}>Quét bệnh cho {cay.ten}</Text>
+                        <Ionicons name="scan-outline" size={s(20)} color="#FFF" />
+                        <Text style={[styles.scanBtnText, { fontSize: s(16) }]}>{t('ctb_quetbenhcho')} {cay.ten}</Text>
                     </TouchableOpacity>
                 </Animated.View>
             </ScrollView>
@@ -178,9 +179,9 @@ const styles = StyleSheet.create({
         marginBottom: 16,
     },
     headerContent: { alignItems: 'center' },
-    headerIcon: { fontSize: 64, marginBottom: 10 },
-    headerName: { fontSize: 28, fontWeight: '800', color: '#FFF' },
-    headerSci: { fontSize: 15, color: 'rgba(255,255,255,0.7)', fontStyle: 'italic', marginTop: 4 },
+    headerIcon: { marginBottom: 10 },
+    headerName: { fontWeight: '800', color: '#FFF' },
+    headerSci: { color: 'rgba(255,255,255,0.7)', fontStyle: 'italic', marginTop: 4 },
     headerDecor1: {
         position: 'absolute',
         top: -30,
@@ -209,10 +210,10 @@ const styles = StyleSheet.create({
     },
     sectionTitle: { fontSize: 16, fontWeight: '700' },
     sectionContent: { marginTop: 12 },
-    contentText: { fontSize: 14, lineHeight: 22 },
+    contentText: { lineHeight: 22 },
     listItem: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 8 },
     bullet: { width: 6, height: 6, borderRadius: 3 },
-    listText: { flex: 1, fontSize: 14, lineHeight: 20 },
+    listText: { flex: 1, lineHeight: 20 },
     scanBtn: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -222,7 +223,7 @@ const styles = StyleSheet.create({
         borderRadius: 16,
         marginTop: 8,
     },
-    scanBtnText: { color: '#FFF', fontSize: 16, fontWeight: '700' },
+    scanBtnText: { color: '#FFF', fontWeight: '700' },
 });
 
 export default ChiTietBenhScreen;

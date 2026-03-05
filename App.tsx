@@ -1,5 +1,5 @@
-// App.tsx — Main entry point
 import React from 'react';
+import ToanCauLoi from './src/components/toan_cau_loi';
 import { StatusBar } from 'expo-status-bar';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';
@@ -8,7 +8,6 @@ import DieuHuongChinh from './src/navigation/dieu_huong_chinh';
 
 const AppContent: React.FC = () => {
     const { laToi } = useChuDe();
-
     return (
         <>
             <StatusBar style={laToi ? 'light' : 'dark'} />
@@ -22,9 +21,11 @@ const AppContent: React.FC = () => {
 export default function App() {
     return (
         <GestureHandlerRootView style={{ flex: 1 }}>
-            <ChuDeProvider>
-                <AppContent />
-            </ChuDeProvider>
+            <ToanCauLoi>
+                <ChuDeProvider>
+                    <AppContent />
+                </ChuDeProvider>
+            </ToanCauLoi>
         </GestureHandlerRootView>
     );
 }

@@ -19,6 +19,7 @@ import Animated, {
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { useChuDe } from '../theme/chu_de';
+import { useNgonNgu, useCoChu } from '../utils/ngon_ngu';
 import { usePhanTichStore } from '../store/phan_tich_store';
 
 const { width, height } = Dimensions.get('window');
@@ -29,6 +30,8 @@ interface Props {
 
 const CameraScreen: React.FC<Props> = ({ navigation }) => {
     const { mau } = useChuDe();
+    const t = useNgonNgu();
+    const s = useCoChu();
     const [flash, setFlash] = useState(false);
     const [showFlash, setShowFlash] = useState(false);
     const { datAnhChup } = usePhanTichStore();
@@ -64,7 +67,7 @@ const CameraScreen: React.FC<Props> = ({ navigation }) => {
     const handleGallery = useCallback(async () => {
         const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
         if (status !== 'granted') {
-            Alert.alert('Quyền truy cập', 'Cần quyền truy cập thư viện ảnh.');
+            Alert.alert(t('cm_quyen_t'), t('cm_quyen_m'));
             return;
         }
         const result = await ImagePicker.launchImageLibraryAsync({
@@ -97,7 +100,7 @@ const CameraScreen: React.FC<Props> = ({ navigation }) => {
                         <View style={[styles.corner, styles.bottomRight]} />
                     </Animated.View>
 
-                    <Text style={styles.guideText}>Đặt lá cây vào khung hình</Text>
+                    <Text style={[styles.guideText, { fontSize: s(14) }]}>{t('cm_huongdan')}</Text>
                 </View>
 
                 {/* Flash overlay */}
@@ -118,7 +121,7 @@ const CameraScreen: React.FC<Props> = ({ navigation }) => {
                     onPress={() => setFlash(!flash)}
                     style={[styles.topBtn, flash && styles.topBtnActive]}
                 >
-                    <Ionicons name={flash ? 'flash' : 'flash-off'} size={22} color="#FFF" />
+                    <Ionicons name={flash ? 'flash' : 'flash-off'} size={s(22)} color="#FFF" />
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.topBtn}>
                     <Ionicons name="camera-reverse-outline" size={24} color="#FFF" />
@@ -127,8 +130,8 @@ const CameraScreen: React.FC<Props> = ({ navigation }) => {
 
             {/* Tip */}
             <View style={styles.tipWrap}>
-                <Text style={styles.tipText}>
-                    💡 Đảm bảo đủ ánh sáng để tăng độ chính xác
+                <Text style={[styles.tipText, { fontSize: s(13) }]}>
+                    {t('cm_meo_anhsang')}
                 </Text>
             </View>
 
@@ -209,7 +212,6 @@ const styles = StyleSheet.create({
     guideText: {
         marginTop: 20,
         color: 'rgba(255,255,255,0.7)',
-        fontSize: 14,
         fontWeight: '500',
     },
     flashOverlay: {
@@ -249,7 +251,6 @@ const styles = StyleSheet.create({
     },
     tipText: {
         color: '#FFF',
-        fontSize: 13,
         fontWeight: '500',
     },
     bottomBar: {

@@ -13,6 +13,7 @@ import Animated, {
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useChuDe } from '../theme/chu_de';
+import { useNgonNgu, useCoChu } from '../utils/ngon_ngu';
 import { THOI_GIAN_SPLASH } from '../utils/hang_so';
 
 const { width, height } = Dimensions.get('window');
@@ -23,6 +24,8 @@ interface Props {
 
 const SplashScreen: React.FC<Props> = ({ navigation }) => {
     const { mau } = useChuDe();
+    const t = useNgonNgu();
+    const s = useCoChu();
 
     const logoScale = useSharedValue(0.3);
     const logoOpacity = useSharedValue(0);
@@ -121,21 +124,21 @@ const SplashScreen: React.FC<Props> = ({ navigation }) => {
             {/* Logo */}
             <Animated.View style={[styles.logoContainer, logoStyle]}>
                 <View style={styles.logoCircle}>
-                    <Ionicons name="leaf" size={48} color={mau.xanh_chinh} />
+                    <Ionicons name="leaf" size={s(48)} color={mau.xanh_chinh} />
                     <View style={[styles.aiBadge, { backgroundColor: mau.xanh_chinh }]}>
-                        <Text style={styles.aiText}>AI</Text>
+                        <Text style={[styles.aiText, { fontSize: s(11) }]}>AI</Text>
                     </View>
                 </View>
             </Animated.View>
 
             {/* Title */}
             <Animated.View style={titleStyle}>
-                <Text style={styles.appName}>PlantCare AI</Text>
+                <Text style={[styles.appName, { fontSize: s(36) }]}>PlantCare AI</Text>
             </Animated.View>
 
             {/* Tagline */}
             <Animated.View style={taglineStyle}>
-                <Text style={styles.tagline}>Phát hiện bệnh cây thông minh 🌿</Text>
+                <Text style={[styles.tagline, { fontSize: s(16) }]}>{t('sp_tagline')}</Text>
             </Animated.View>
         </LinearGradient>
     );
@@ -203,14 +206,12 @@ const styles = StyleSheet.create({
         fontWeight: '800',
     },
     appName: {
-        fontSize: 36,
         fontWeight: '800',
         color: '#FFFFFF',
         textAlign: 'center',
         letterSpacing: 1,
     },
     tagline: {
-        fontSize: 16,
         color: 'rgba(255,255,255,0.8)',
         textAlign: 'center',
         marginTop: 10,

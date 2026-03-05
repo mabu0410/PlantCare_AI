@@ -17,31 +17,11 @@ import Animated, {
 } from 'react-native-reanimated';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useChuDe } from '../theme/chu_de';
+import { useNgonNgu, useCoChu } from '../utils/ngon_ngu';
 import { useAuthStore } from '../store/auth_store';
 import NutBam from '../components/nut_bam';
 
 const { width } = Dimensions.get('window');
-
-const SLIDES = [
-    {
-        id: '1',
-        icon: '📸',
-        title: 'Chụp ảnh lá cây',
-        subtitle: 'Chụp hoặc tải ảnh lá cây bị bệnh lên ứng dụng để bắt đầu phân tích',
-    },
-    {
-        id: '2',
-        icon: '🤖',
-        title: 'AI Phân tích',
-        subtitle: 'Trí tuệ nhân tạo tự động nhận diện loại bệnh với độ chính xác cao',
-    },
-    {
-        id: '3',
-        icon: '💊',
-        title: 'Nhận phác đồ điều trị',
-        subtitle: 'Hướng dẫn điều trị chi tiết và các biện pháp phòng ngừa hiệu quả',
-    },
-];
 
 interface Props {
     navigation: any;
@@ -49,6 +29,30 @@ interface Props {
 
 const OnboardingScreen: React.FC<Props> = ({ navigation }) => {
     const { mau } = useChuDe();
+    const t = useNgonNgu();
+    const s = useCoChu();
+
+    const SLIDES = React.useMemo(() => [
+        {
+            id: '1',
+            icon: '📸',
+            title: t('ob_s1_t'),
+            subtitle: t('ob_s1_m'),
+        },
+        {
+            id: '2',
+            icon: '🤖',
+            title: t('ob_s2_t'),
+            subtitle: t('ob_s2_m'),
+        },
+        {
+            id: '3',
+            icon: '💊',
+            title: t('ob_s3_t'),
+            subtitle: t('ob_s3_m'),
+        },
+    ], [t]);
+
     const [activeIndex, setActiveIndex] = useState(0);
     const datDaXemOnboarding = useAuthStore(s => s.datDaXemOnboarding);
     const flatListRef = React.useRef<FlatList>(null);
@@ -68,13 +72,13 @@ const OnboardingScreen: React.FC<Props> = ({ navigation }) => {
         navigation.replace('DangNhap');
     }, [datDaXemOnboarding, navigation]);
 
-    const renderSlide = ({ item }: { item: typeof SLIDES[0] }) => (
+    const renderSlide = ({ item }: { item: any }) => (
         <Animated.View entering={FadeIn.duration(400)} style={[styles.slide, { width }]}>
             <View style={styles.iconContainer}>
-                <Text style={styles.icon}>{item.icon}</Text>
+                <Text style={[styles.icon, { fontSize: s(64) }]}>{item.icon}</Text>
             </View>
-            <Text style={[styles.title, { color: mau.chu_chinh }]}>{item.title}</Text>
-            <Text style={[styles.subtitle, { color: mau.chu_phu }]}>{item.subtitle}</Text>
+            <Text style={[styles.title, { color: mau.chu_chinh, fontSize: s(28) }]}>{item.title}</Text>
+            <Text style={[styles.subtitle, { color: mau.chu_phu, fontSize: s(16) }]}>{item.subtitle}</Text>
         </Animated.View>
     );
 
@@ -82,7 +86,7 @@ const OnboardingScreen: React.FC<Props> = ({ navigation }) => {
         <View style={[styles.container, { backgroundColor: mau.nen }]}>
             {/* Skip button */}
             <TouchableOpacity style={styles.skipButton} onPress={handleSkip}>
-                <Text style={[styles.skipText, { color: mau.chu_phu }]}>Bỏ qua</Text>
+                <Text style={[styles.skipText, { color: mau.chu_phu, fontSize: s(15) }]}>{t('ob_boqua')}</Text>
             </TouchableOpacity>
 
             {/* Carousel */}
@@ -119,7 +123,7 @@ const OnboardingScreen: React.FC<Props> = ({ navigation }) => {
             {/* Button */}
             <View style={styles.buttonContainer}>
                 <NutBam
-                    tieu_de={activeIndex === SLIDES.length - 1 ? 'Bắt đầu 🚀' : 'Tiếp theo'}
+                    tieu_de={activeIndex === SLIDES.length - 1 ? t('ob_batdau') : t('ob_tieptheo')}
                     onPress={handleNext}
                     fullWidth
                 />
@@ -162,13 +166,11 @@ const styles = StyleSheet.create({
         fontSize: 64,
     },
     title: {
-        fontSize: 28,
         fontWeight: '800',
         textAlign: 'center',
         marginBottom: 16,
     },
     subtitle: {
-        fontSize: 16,
         textAlign: 'center',
         lineHeight: 24,
     },

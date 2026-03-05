@@ -7,6 +7,9 @@ import {
     SafeAreaView,
     ScrollView,
     TouchableOpacity,
+    Alert,
+    Platform,
+    Image,
 } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
@@ -14,6 +17,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useChuDe } from '../theme/chu_de';
 import { useAuthStore } from '../store/auth_store';
 import { usePhanTichStore } from '../store/phan_tich_store';
+import { useNgonNgu, useCoChu } from '../utils/ngon_ngu';
 import TheThuyTinh from '../components/the_thuy_tinh';
 import { NGUOI_DUNG_MAU } from '../utils/du_lieu_mau';
 
@@ -26,14 +30,16 @@ const TaiKhoanScreen: React.FC<Props> = ({ navigation }) => {
     const { nguoi_dung, dangXuat } = useAuthStore();
     const { thong_ke } = usePhanTichStore();
     const user = nguoi_dung || NGUOI_DUNG_MAU;
+    const t = useNgonNgu();
+    const s = useCoChu();
 
     const menuItems = [
-        { icon: 'settings-outline', label: 'Cài đặt', screen: 'CaiDat', color: mau.thong_tin },
-        { icon: 'bookmark-outline', label: 'Đã lưu', screen: null, color: mau.xanh_chinh },
-        { icon: 'notifications-outline', label: 'Thông báo', screen: null, color: mau.canh_bao },
-        { icon: 'help-circle-outline', label: 'Trợ giúp', screen: null, color: mau.thanh_cong },
-        { icon: 'star-outline', label: 'Đánh giá ứng dụng', screen: null, color: '#F59E0B' },
-        { icon: 'information-circle-outline', label: 'Về ứng dụng', screen: null, color: mau.chu_phu },
+        { icon: 'settings-outline', label: t('cd_title'), screen: 'CaiDat', color: mau.thong_tin },
+        { icon: 'bookmark-outline', label: t('tk_daluu'), screen: 'DaLuu', color: mau.xanh_chinh },
+        { icon: 'notifications-outline', label: t('tk_thongbao'), screen: 'ThongBao', color: mau.canh_bao },
+        { icon: 'help-circle-outline', label: t('tk_trogiup'), screen: 'PhanHoi', color: mau.thanh_cong },
+        { icon: 'star-outline', label: t('cd_danhgia'), screen: 'DanhGia', color: '#F59E0B' },
+        { icon: 'information-circle-outline', label: t('tk_phienban'), screen: 'VeUngDung', color: mau.chu_phu },
     ];
 
     return (
@@ -47,32 +53,41 @@ const TaiKhoanScreen: React.FC<Props> = ({ navigation }) => {
                         start={{ x: 0, y: 0 }}
                         end={{ x: 1, y: 1 }}
                     >
+                        {/* Decorative */}
+                        <View style={styles.decor} />
+
                         <View style={styles.avatarCircle}>
-                            <Text style={{ fontSize: 36 }}>👨‍🌾</Text>
+                            {user.anh_dai_dien ? (
+                                <Image source={{ uri: user.anh_dai_dien }} style={styles.avatarImage} />
+                            ) : (
+                                <Text style={{ fontSize: s(36) }}>👨‍🌾</Text>
+                            )}
                         </View>
-                        <Text style={styles.userName}>{user.ten}</Text>
-                        <Text style={styles.userEmail}>{user.email}</Text>
+                        <Text style={[styles.userName, { fontSize: s(22) }]}>{user.ten}</Text>
+                        <Text style={[styles.userEmail, { fontSize: s(14) }]}>{user.email}</Text>
+
+                        {/* Edit Button */}
+                        <TouchableOpacity style={[styles.editBtn, { zIndex: 10 }]} onPress={() => navigation.navigate('ChinhSuaHoSo')}>
+                            <Ionicons name="pencil" size={16} color="#FFF" />
+                        </TouchableOpacity>
 
                         {/* Stats */}
                         <View style={styles.statsRow}>
                             <View style={styles.statItem}>
-                                <Text style={styles.statValue}>{thong_ke.so_lan_phan_tich}</Text>
-                                <Text style={styles.statLabel}>Lần quét</Text>
+                                <Text style={[styles.statValue, { fontSize: s(22) }]}>{thong_ke.so_lan_phan_tich}</Text>
+                                <Text style={[styles.statLabel, { fontSize: s(12) }]}>Lần quét</Text>
                             </View>
                             <View style={[styles.statDivider, { backgroundColor: 'rgba(255,255,255,0.2)' }]} />
                             <View style={styles.statItem}>
-                                <Text style={styles.statValue}>{thong_ke.so_benh_phat_hien}</Text>
-                                <Text style={styles.statLabel}>Bệnh</Text>
+                                <Text style={[styles.statValue, { fontSize: s(22) }]}>{thong_ke.so_benh_phat_hien}</Text>
+                                <Text style={[styles.statLabel, { fontSize: s(12) }]}>Bệnh</Text>
                             </View>
                             <View style={[styles.statDivider, { backgroundColor: 'rgba(255,255,255,0.2)' }]} />
                             <View style={styles.statItem}>
-                                <Text style={styles.statValue}>{thong_ke.so_cay_da_luu}</Text>
-                                <Text style={styles.statLabel}>Cây lưu</Text>
+                                <Text style={[styles.statValue, { fontSize: s(22) }]}>{thong_ke.so_cay_da_luu}</Text>
+                                <Text style={[styles.statLabel, { fontSize: s(12) }]}>Cây lưu</Text>
                             </View>
                         </View>
-
-                        {/* Decorative */}
-                        <View style={styles.decor} />
                     </LinearGradient>
                 </Animated.View>
 
@@ -89,13 +104,23 @@ const TaiKhoanScreen: React.FC<Props> = ({ navigation }) => {
                                         borderBottomColor: mau.vien,
                                     },
                                 ]}
-                                onPress={() => item.screen && navigation.navigate(item.screen)}
+                                onPress={() => {
+                                    if (item.screen === 'DanhGia') {
+                                        if (Platform.OS === 'web') {
+                                            window.alert('Đánh giá ứng dụng\n\nChuyển hướng đến App Store / Google Play...');
+                                        } else {
+                                            Alert.alert('Đánh giá', 'Chuyển hướng đến App Store / Google Play...');
+                                        }
+                                    } else if (item.screen) {
+                                        navigation.navigate(item.screen);
+                                    }
+                                }}
                             >
                                 <View style={[styles.menuIcon, { backgroundColor: item.color + '15' }]}>
-                                    <Ionicons name={item.icon as any} size={20} color={item.color} />
+                                    <Ionicons name={item.icon as any} size={s(20)} color={item.color} />
                                 </View>
-                                <Text style={[styles.menuLabel, { color: mau.chu_chinh }]}>{item.label}</Text>
-                                <Ionicons name="chevron-forward" size={18} color={mau.chu_nhat} />
+                                <Text style={[styles.menuLabel, { color: mau.chu_chinh, fontSize: s(15) }]}>{item.label}</Text>
+                                <Ionicons name="chevron-forward" size={s(18)} color={mau.chu_nhat} />
                             </TouchableOpacity>
                         ))}
                     </TheThuyTinh>
@@ -106,17 +131,34 @@ const TaiKhoanScreen: React.FC<Props> = ({ navigation }) => {
                     <TouchableOpacity
                         style={[styles.logoutBtn, { backgroundColor: mau.nguy_hiem + '12' }]}
                         onPress={() => {
-                            dangXuat();
-                            navigation.reset({ index: 0, routes: [{ name: 'DangNhap' }] });
+                            if (Platform.OS === 'web') {
+                                const confirm = window.confirm(t('tk_dangxuat') + '\n\nBạn có chắc chắn muốn đăng xuất không?');
+                                if (confirm) {
+                                    dangXuat();
+                                    navigation.reset({ index: 0, routes: [{ name: 'DangNhap' }] });
+                                }
+                            } else {
+                                Alert.alert(t('tk_dangxuat'), 'Bạn có chắc chắn muốn đăng xuất?', [
+                                    { text: t('huy'), style: 'cancel' },
+                                    {
+                                        text: t('tk_dangxuat'),
+                                        style: 'destructive',
+                                        onPress: () => {
+                                            dangXuat();
+                                            navigation.reset({ index: 0, routes: [{ name: 'DangNhap' }] });
+                                        },
+                                    },
+                                ]);
+                            }
                         }}
                     >
-                        <Ionicons name="log-out-outline" size={20} color={mau.nguy_hiem} />
-                        <Text style={[styles.logoutText, { color: mau.nguy_hiem }]}>Đăng xuất</Text>
+                        <Ionicons name="log-out-outline" size={s(20)} color={mau.nguy_hiem} />
+                        <Text style={[styles.logoutText, { color: mau.nguy_hiem, fontSize: s(16) }]}>{t('tk_dangxuat')}</Text>
                     </TouchableOpacity>
                 </Animated.View>
 
                 {/* Version */}
-                <Text style={[styles.version, { color: mau.chu_nhat }]}>PlantCare AI v2.0.0</Text>
+                <Text style={[styles.version, { color: mau.chu_nhat, fontSize: s(13) }]}>PlantCare AI v2.0.0</Text>
             </ScrollView>
         </SafeAreaView>
     );
@@ -144,9 +186,26 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.15,
         shadowRadius: 8,
         elevation: 6,
+        overflow: 'hidden',
+    },
+    avatarImage: {
+        width: 80,
+        height: 80,
+        borderRadius: 40,
     },
     userName: { fontSize: 22, fontWeight: '800', color: '#FFF' },
     userEmail: { fontSize: 14, color: 'rgba(255,255,255,0.7)', marginTop: 4 },
+    editBtn: {
+        position: 'absolute',
+        top: 20,
+        right: 20,
+        backgroundColor: 'rgba(255,255,255,0.2)',
+        width: 36,
+        height: 36,
+        borderRadius: 18,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
     statsRow: {
         flexDirection: 'row',
         marginTop: 20,

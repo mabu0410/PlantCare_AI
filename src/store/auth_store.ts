@@ -11,6 +11,7 @@ interface AuthState {
     dangNhap: (email: string, mat_khau: string) => Promise<boolean>;
     dangKy: (ten: string, email: string, mat_khau: string) => Promise<boolean>;
     dangXuat: () => void;
+    capNhatHoSo: (thongTin: Partial<NguoiDung>) => Promise<boolean>;
     datDaXemOnboarding: () => void;
 }
 
@@ -45,6 +46,20 @@ export const useAuthStore = create<AuthState>((set) => ({
 
     dangXuat: () => {
         set({ nguoi_dung: null, da_dang_nhap: false });
+    },
+
+    capNhatHoSo: async (thongTin: Partial<NguoiDung>) => {
+        set({ dang_tai: true });
+        // Mock delay for saving profile
+        await new Promise(resolve => setTimeout(resolve, 800));
+        set(state => {
+            if (!state.nguoi_dung) return state;
+            return {
+                nguoi_dung: { ...state.nguoi_dung, ...thongTin },
+                dang_tai: false,
+            };
+        });
+        return true;
     },
 
     datDaXemOnboarding: () => {

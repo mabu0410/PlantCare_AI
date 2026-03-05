@@ -20,12 +20,22 @@ export const dinhDangNgayGio = (isoString: string): string => {
 
 export const dinhDangPhanTram = (val: number): string => `${Math.round(val)}%`;
 
-export const tenMucDo = (muc: string): string => {
+export const tenMucDo = (muc: string, t?: any): string => {
+    if (!t) {
+        const map: Record<string, string> = {
+            thap: 'Thấp',
+            trung_binh: 'Trung bình',
+            cao: 'Cao',
+            nghiem_trong: 'Nghiêm trọng',
+        };
+        return map[muc] || muc;
+    }
+
     const map: Record<string, string> = {
-        thap: 'Thấp',
-        trung_binh: 'Trung bình',
-        cao: 'Cao',
-        nghiem_trong: 'Nghiêm trọng',
+        thap: t('muc_thap'),
+        trung_binh: t('muc_trungbinh'),
+        cao: t('muc_cao'),
+        nghiem_trong: t('muc_nghiemtrong'),
     };
     return map[muc] || muc;
 };

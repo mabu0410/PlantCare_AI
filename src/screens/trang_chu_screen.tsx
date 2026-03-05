@@ -28,6 +28,7 @@ import TheThongKe from '../components/the_thong_ke';
 import NutBam from '../components/nut_bam';
 import { dinhDangNgay, tenMucDo, mauMucDo } from '../utils/dinh_dang';
 import { MEO_NGAY_MAU } from '../utils/du_lieu_mau';
+import { useNgonNgu, useCoChu } from '../utils/ngon_ngu';
 
 const { width } = Dimensions.get('window');
 
@@ -38,6 +39,8 @@ interface Props {
 const TrangChuScreen: React.FC<Props> = ({ navigation }) => {
     const { mau } = useChuDe();
     const { thong_ke, lich_su } = usePhanTichStore();
+    const t = useNgonNgu();
+    const s = useCoChu();
 
     const meoNgay = useMemo(() => {
         const idx = new Date().getDay() % MEO_NGAY_MAU.length;
@@ -97,19 +100,19 @@ const TrangChuScreen: React.FC<Props> = ({ navigation }) => {
                     </View>
                     <View style={styles.historyInfo}>
                         <Text
-                            style={[styles.historyName, { color: mau.chu_chinh }]}
+                            style={[styles.historyName, { color: mau.chu_chinh, fontSize: s(14) }]}
                             numberOfLines={1}
                         >
                             {item.ten_benh}
                         </Text>
-                        <Text style={[styles.historyDate, { color: mau.chu_nhat }]}>
+                        <Text style={[styles.historyDate, { color: mau.chu_nhat, fontSize: s(12) }]}>
                             {dinhDangNgay(item.ngay_phan_tich)}
                         </Text>
                     </View>
                     <Text
                         style={[
                             styles.historyPercent,
-                            { color: mauMucDo(item.muc_do, mau) },
+                            { color: mauMucDo(item.muc_do, mau), fontSize: s(16) },
                         ]}
                     >
                         {item.do_chinh_xac}%
@@ -129,11 +132,11 @@ const TrangChuScreen: React.FC<Props> = ({ navigation }) => {
                 {/* Header */}
                 <Animated.View entering={FadeInDown.duration(500)} style={styles.header}>
                     <View>
-                        <Text style={[styles.greeting, { color: mau.chu_chinh }]}>
-                            Xin chào, Nông dân! 👋
+                        <Text style={[styles.greeting, { color: mau.chu_chinh, fontSize: s(26) }]}>
+                            {t('tc_xinchao')}
                         </Text>
-                        <Text style={[styles.subtitle, { color: mau.chu_phu }]}>
-                            Phát hiện bệnh cây trồng bằng AI
+                        <Text style={[styles.subtitle, { color: mau.chu_phu, fontSize: s(14) }]}>
+                            {t('tc_phathien')}
                         </Text>
                     </View>
                     <TouchableOpacity
@@ -158,9 +161,9 @@ const TrangChuScreen: React.FC<Props> = ({ navigation }) => {
                                 size={44}
                                 color="rgba(255,255,255,0.9)"
                             />
-                            <Text style={styles.heroTitle}>PlantCare AI</Text>
-                            <Text style={styles.heroSubtitle}>
-                                Chụp ảnh lá cây để nhận diện bệnh ngay lập tức 🔍
+                            <Text style={[styles.heroTitle, { fontSize: s(22) }]}>PlantCare AI</Text>
+                            <Text style={[styles.heroSubtitle, { fontSize: s(14) }]}>
+                                {t('tc_chupanh')}
                             </Text>
                         </View>
                     </LinearGradient>
@@ -170,10 +173,10 @@ const TrangChuScreen: React.FC<Props> = ({ navigation }) => {
                 <Animated.View entering={FadeInDown.delay(300).duration(500)} style={styles.scanBtnWrap}>
                     <Animated.View style={pulseStyle}>
                         <NutBam
-                            tieu_de="🔍  Quét Bệnh Ngay"
+                            tieu_de={t('tc_quetngay')}
                             onPress={handleCamera}
                             fullWidth
-                            textStyle={{ fontSize: 18 }}
+                            textStyle={{ fontSize: s(18) }}
                         />
                     </Animated.View>
                 </Animated.View>
@@ -183,19 +186,19 @@ const TrangChuScreen: React.FC<Props> = ({ navigation }) => {
                     <TheThongKe
                         icon={<Ionicons name="scan-outline" size={22} color={mau.thong_tin} />}
                         gia_tri={thong_ke.so_lan_phan_tich}
-                        nhan="Số lần quét"
+                        nhan={t('tc_lanquet')}
                         delay={400}
                     />
                     <TheThongKe
                         icon={<Ionicons name="bug-outline" size={22} color={mau.canh_bao} />}
                         gia_tri={thong_ke.so_benh_phat_hien}
-                        nhan="Bệnh phát hiện"
+                        nhan={t('tc_benh')}
                         delay={550}
                     />
                     <TheThongKe
                         icon={<Ionicons name="leaf-outline" size={22} color={mau.thanh_cong} />}
                         gia_tri={thong_ke.so_cay_da_luu}
-                        nhan="Cây đã lưu"
+                        nhan={t('tc_cayluu')}
                         delay={700}
                     />
                 </Animated.View>
@@ -206,18 +209,18 @@ const TrangChuScreen: React.FC<Props> = ({ navigation }) => {
                         <View style={styles.weatherRow}>
                             <Text style={{ fontSize: 40 }}>🌤️</Text>
                             <View style={styles.weatherInfo}>
-                                <Text style={[styles.weatherTemp, { color: mau.chu_chinh }]}>
+                                <Text style={[styles.weatherTemp, { color: mau.chu_chinh, fontSize: s(28) }]}>
                                     28°C
                                 </Text>
-                                <Text style={[styles.weatherHum, { color: mau.chu_phu }]}>
-                                    Độ ẩm: 75%
+                                <Text style={[styles.weatherHum, { color: mau.chu_phu, fontSize: s(14) }]}>
+                                    {t('tc_doam')}: 75%
                                 </Text>
                             </View>
                         </View>
                         <View style={[styles.weatherWarning, { backgroundColor: mau.canh_bao + '15' }]}>
                             <Ionicons name="warning-outline" size={16} color={mau.canh_bao} />
-                            <Text style={[styles.weatherWarningText, { color: mau.canh_bao }]}>
-                                Điều kiện thuận lợi cho nấm phát triển
+                            <Text style={[styles.weatherWarningText, { color: mau.canh_bao, fontSize: s(13) }]}>
+                                {t('tc_thoitiet_canhbao')}
                             </Text>
                         </View>
                     </TheThuyTinh>
@@ -227,12 +230,12 @@ const TrangChuScreen: React.FC<Props> = ({ navigation }) => {
                 {lichSuGanDay.length > 0 && (
                     <Animated.View entering={FadeInDown.delay(600).duration(500)}>
                         <View style={styles.sectionHeader}>
-                            <Text style={[styles.sectionTitle, { color: mau.chu_chinh }]}>
-                                Lịch sử gần đây
+                            <Text style={[styles.sectionTitle, { color: mau.chu_chinh, fontSize: s(18) }]}>
+                                {t('tc_lichsuganday')}
                             </Text>
                             <TouchableOpacity onPress={() => navigation.navigate('LichSu')}>
-                                <Text style={[styles.seeAll, { color: mau.xanh_chinh }]}>
-                                    Xem tất cả →
+                                <Text style={[styles.seeAll, { color: mau.xanh_chinh, fontSize: s(14) }]}>
+                                    {t('tc_xemtatca')}
                                 </Text>
                             </TouchableOpacity>
                         </View>
@@ -250,8 +253,8 @@ const TrangChuScreen: React.FC<Props> = ({ navigation }) => {
                 {/* Daily Tip */}
                 <Animated.View entering={FadeInDown.delay(700).duration(500)}>
                     <TheThuyTinh style={styles.tipCard}>
-                        <Text style={[styles.tipTitle, { color: mau.chu_chinh }]}>Mẹo hôm nay 💡</Text>
-                        <Text style={[styles.tipText, { color: mau.chu_phu }]}>{meoNgay}</Text>
+                        <Text style={[styles.tipTitle, { color: mau.chu_chinh, fontSize: s(16) }]}>{t('tc_meo')}</Text>
+                        <Text style={[styles.tipText, { color: mau.chu_phu, fontSize: s(14) }]}>{meoNgay}</Text>
                     </TheThuyTinh>
                 </Animated.View>
             </ScrollView>
@@ -339,12 +342,12 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     historyInfo: { flex: 1 },
-    historyName: { fontSize: 14, fontWeight: '700' },
-    historyDate: { fontSize: 12, marginTop: 2 },
-    historyPercent: { fontSize: 16, fontWeight: '800', alignSelf: 'flex-start' },
+    historyName: { fontWeight: '700' },
+    historyDate: { marginTop: 2 },
+    historyPercent: { fontWeight: '800', alignSelf: 'flex-start' },
     tipCard: { marginBottom: 18 },
-    tipTitle: { fontSize: 16, fontWeight: '700', marginBottom: 6 },
-    tipText: { fontSize: 14, lineHeight: 22 },
+    tipTitle: { fontWeight: '700', marginBottom: 6 },
+    tipText: { lineHeight: 22 },
 });
 
 export default TrangChuScreen;
