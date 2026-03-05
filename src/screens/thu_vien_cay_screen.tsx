@@ -26,14 +26,20 @@ const ThuVienCayScreen: React.FC<Props> = ({ navigation }) => {
     const t = useNgonNgu();
     const s = useCoChu();
 
+    const [danhMuc, setDanhMuc] = useState('Tất cả');
+    const categories = ['Tất cả', 'Rau', 'Quả', 'Hoa', 'Cây cảnh'];
+
     const cayLocDuoc = useMemo(
         () =>
             CAY_TRONG_MAU.filter(
-                cay =>
-                    cay.ten.toLowerCase().includes(timKiem.toLowerCase()) ||
-                    cay.ten_khoa_hoc.toLowerCase().includes(timKiem.toLowerCase())
+                cay => {
+                    const matchTimKiem = cay.ten.toLowerCase().includes(timKiem.toLowerCase()) ||
+                        cay.ten_khoa_hoc.toLowerCase().includes(timKiem.toLowerCase());
+                    const matchDanhMuc = danhMuc === 'Tất cả' || cay.mo_ta.includes(danhMuc);
+                    return matchTimKiem && matchDanhMuc;
+                }
             ),
-        [timKiem]
+        [timKiem, danhMuc]
     );
 
     const renderItem = useCallback(
@@ -131,6 +137,33 @@ const ThuVienCayScreen: React.FC<Props> = ({ navigation }) => {
                 </View>
             </Animated.View>
 
+            {/* Categories */}
+            <Animated.View entering={FadeInDown.delay(150).duration(400)}>
+                <FlatList
+                    data={categories}
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    contentContainerStyle={styles.categoryList}
+                    keyExtractor={item => item}
+                    renderItem={({ item }) => {
+                        const isSelected = danhMuc === item;
+                        return (
+                            <TouchableOpacity
+                                style={[
+                                    styles.categoryPill,
+                                    { backgroundColor: isSelected ? mau.xanh_chinh : mau.nen_the, borderColor: isSelected ? mau.xanh_chinh : mau.vien }
+                                ]}
+                                onPress={() => setDanhMuc(item)}
+                            >
+                                <Text style={[styles.categoryText, { color: isSelected ? '#FFF' : mau.chu_phu, fontSize: s(13) }]}>
+                                    {item}
+                                </Text>
+                            </TouchableOpacity>
+                        );
+                    }}
+                />
+            </Animated.View>
+
             {/* Plant list */}
             <FlatList
                 data={cayLocDuoc}
@@ -184,6 +217,14 @@ const styles = StyleSheet.create({
     diseaseRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginTop: 6 },
     diseasePill: { paddingHorizontal: 8, paddingVertical: 3, borderRadius: 8 },
     diseaseText: { fontWeight: '600' },
+    categoryList: { paddingHorizontal: 20, paddingBottom: 16, gap: 10 },
+    categoryPill: {
+        paddingHorizontal: 16,
+        paddingVertical: 8,
+        borderRadius: 20,
+        borderWidth: 1,
+    },
+    categoryText: { fontWeight: '600' },
     emptyState: { alignItems: 'center', paddingTop: 60, gap: 12 },
     emptyText: { fontWeight: '500' },
 });

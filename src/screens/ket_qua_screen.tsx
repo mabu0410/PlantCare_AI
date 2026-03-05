@@ -30,6 +30,9 @@ import ThanhTienTrinh from '../components/thanh_tien_trinh';
 import NutBam from '../components/nut_bam';
 import { tenMucDo, mauMucDo, dinhDangNgayGio } from '../utils/dinh_dang';
 import type { KetQuaPhanTich } from '../types/kieu_du_lieu';
+import { KetQuaSkeleton } from '../components/khung_xuong_loader';
+import { chamSocService } from '../services/cham_soc_service';
+import { useThongBaoToast } from '../components/thong_bao_toast';
 
 interface Props {
     navigation: any;
@@ -41,6 +44,7 @@ const KetQuaScreen: React.FC<Props> = ({ navigation, route }) => {
     const t = useNgonNgu();
     const s = useCoChu();
     const { batDauPhanTich, ket_qua_hien_tai, dang_phan_tich } = usePhanTichStore();
+    const { hienToast } = useThongBaoToast();
     const [ketQua, setKetQua] = useState<KetQuaPhanTich | null>(route.params?.ketQua || null);
     const [activeTab, setActiveTab] = useState(0);
 
@@ -93,27 +97,44 @@ const KetQuaScreen: React.FC<Props> = ({ navigation, route }) => {
     // Loading state
     if (!ketQua) {
         return (
-            <View style={[styles.loadingContainer, { backgroundColor: mau.nen }]}>
-                {/* Blurred background */}
-                <View style={styles.loadingBg}>
-                    <View style={[styles.loadingOverlay, { backgroundColor: 'rgba(0,0,0,0.6)' }]} />
-                    {/* Scan line */}
-                    <Animated.View style={[styles.scanLine, scanStyle]} />
+            <SafeAreaView style={[styles.safeArea, { backgroundColor: mau.nen }]}>
+                <View style={styles.header}>
+                    <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+                        <Ionicons name="arrow-back" size={s(24)} color={mau.chu_chinh} />
+                    </TouchableOpacity>
+                    <Text style={[styles.headerTitle, { color: mau.chu_chinh, fontSize: s(18) }]}>{t('kq_tieude_chinh')}</Text>
+                    <View style={{ width: 40 }} />
                 </View>
-
-                <TheThuyTinh style={styles.loadingCard}>
-                    <ActivityIndicator size="large" color={mau.xanh_chinh} />
-                    <Text style={[styles.loadingText, { color: mau.chu_chinh, fontSize: s(15) }]}>{loadingText}</Text>
-                    <View style={[styles.loadingTrack, { backgroundColor: mau.vien }]}>
-                        <Animated.View style={[styles.loadingFill, { backgroundColor: mau.xanh_chinh }, progStyle]} />
-                    </View>
-                </TheThuyTinh>
-            </View>
+                <KetQuaSkeleton />
+                <View style={{ alignItems: 'center', padding: 20 }}>
+                    <Text style={[styles.loadingText, { color: mau.chu_phu, fontSize: s(14) }]}>{loadingText}</Text>
+                </View>
+            </SafeAreaView>
         );
     }
 
     const tabs = [t('kq_tab_trieuchung'), t('kq_tab_dieutri'), t('kq_tab_phongngua')];
     const tabContent = [ketQua.trieu_chung, ketQua.dieu_tri, ketQua.phong_ngua];
+
+    const handleLuu = async () => {
+        if (!ketQua) return;
+        try {
+            const plant = await chamSocService.themNhatKy({
+                ten: ketQua.ten_benh,
+                loai: ketQua.loai_cay || 'Cây trồng',
+                ngay_trong: new Date().toISOString().split('T')[0],
+                ghi_chu: `Chẩn đoán: ${ketQua.ten_benh} (${ketQua.do_chinh_xac}%)`,
+                anh_uri: imageUri,
+            });
+            // Auto generate reminders
+            await chamSocService.taoNhiemVuTuDong(plant.ten, plant.loai);
+
+            hienToast('Đã lưu vào Nhật ký & Tạo lời nhắc!', 'thanh_cong');
+            navigation.navigate('NhatKyCay');
+        } catch (e) {
+            hienToast('Lỗi khi lưu kết quả', 'loi');
+        }
+    };
 
     return (
         <SafeAreaView style={[styles.safeArea, { backgroundColor: mau.nen }]}>
@@ -224,7 +245,7 @@ const KetQuaScreen: React.FC<Props> = ({ navigation, route }) => {
                 <Animated.View entering={FadeInUp.delay(600).duration(500)} style={styles.actions}>
                     <NutBam
                         tieu_de={t('kq_nut_luu')}
-                        onPress={() => { }}
+                        onPress={handleLuu}
                         loai="vien"
                         style={{ flex: 1 }}
                     />

@@ -13,6 +13,7 @@ import {
 import Animated, {
     FadeInDown,
     FadeInRight,
+    FadeInUp,
     useSharedValue,
     useAnimatedStyle,
     withRepeat,
@@ -29,6 +30,7 @@ import NutBam from '../components/nut_bam';
 import { dinhDangNgay, tenMucDo, mauMucDo } from '../utils/dinh_dang';
 import { MEO_NGAY_MAU } from '../utils/du_lieu_mau';
 import { useNgonNgu, useCoChu } from '../utils/ngon_ngu';
+import { thoitietService, ThoiTiet } from '../services/thoitiet_service';
 
 const { width } = Dimensions.get('window');
 
@@ -48,6 +50,12 @@ const TrangChuScreen: React.FC<Props> = ({ navigation }) => {
     }, []);
 
     const lichSuGanDay = useMemo(() => lich_su.slice(0, 4), [lich_su]);
+
+    const [thoiTiet, setThoiTiet] = React.useState<ThoiTiet | null>(null);
+
+    React.useEffect(() => {
+        thoitietService.layThoiTietHienTai().then(setThoiTiet);
+    }, []);
 
     // Pulse animation for scan button
     const pulseScale = useSharedValue(1);
@@ -204,27 +212,35 @@ const TrangChuScreen: React.FC<Props> = ({ navigation }) => {
                 </Animated.View>
 
                 {/* Weather Widget */}
-                <Animated.View entering={FadeInDown.delay(500).duration(500)}>
-                    <TheThuyTinh style={styles.weatherCard}>
-                        <View style={styles.weatherRow}>
-                            <Text style={{ fontSize: 40 }}>🌤️</Text>
-                            <View style={styles.weatherInfo}>
-                                <Text style={[styles.weatherTemp, { color: mau.chu_chinh, fontSize: s(28) }]}>
-                                    28°C
+                {thoiTiet && (
+                    <Animated.View entering={FadeInDown.delay(500).duration(500)}>
+                        <TheThuyTinh style={styles.weatherCard}>
+                            <View style={styles.weatherRow}>
+                                <Text style={{ fontSize: 40 }}>
+                                    {thoiTiet.trang_thai === 'nang' ? '☀️' : thoiTiet.trang_thai === 'mua' ? '🌧️' : '🌤️'}
                                 </Text>
-                                <Text style={[styles.weatherHum, { color: mau.chu_phu, fontSize: s(14) }]}>
-                                    {t('tc_doam')}: 75%
+                                <View style={styles.weatherInfo}>
+                                    <Text style={[styles.weatherTemp, { color: mau.chu_chinh, fontSize: s(28) }]}>
+                                        {thoiTiet.nhiet_do}°C
+                                    </Text>
+                                    <Text style={[styles.weatherHum, { color: mau.chu_phu, fontSize: s(14) }]}>
+                                        {t('tc_doam')}: {thoiTiet.do_am}%
+                                    </Text>
+                                </View>
+                            </View>
+                            <View style={[styles.weatherWarning, { backgroundColor: thoiTiet.canh_bao ? mau.canh_bao + '15' : mau.thanh_cong + '15' }]}>
+                                <Ionicons
+                                    name={thoiTiet.canh_bao ? "warning-outline" : "checkmark-circle-outline"}
+                                    size={16}
+                                    color={thoiTiet.canh_bao ? mau.canh_bao : mau.thanh_cong}
+                                />
+                                <Text style={[styles.weatherWarningText, { color: thoiTiet.canh_bao ? mau.canh_bao : mau.thanh_cong, fontSize: s(13) }]}>
+                                    {thoiTiet.loi_khuyen}
                                 </Text>
                             </View>
-                        </View>
-                        <View style={[styles.weatherWarning, { backgroundColor: mau.canh_bao + '15' }]}>
-                            <Ionicons name="warning-outline" size={16} color={mau.canh_bao} />
-                            <Text style={[styles.weatherWarningText, { color: mau.canh_bao, fontSize: s(13) }]}>
-                                {t('tc_thoitiet_canhbao')}
-                            </Text>
-                        </View>
-                    </TheThuyTinh>
-                </Animated.View>
+                        </TheThuyTinh>
+                    </Animated.View>
+                )}
 
                 {/* Recent History */}
                 {lichSuGanDay.length > 0 && (
@@ -250,6 +266,54 @@ const TrangChuScreen: React.FC<Props> = ({ navigation }) => {
                     </Animated.View>
                 )}
 
+                {/* My Garden Shortcut */}
+                <Animated.View entering={FadeInDown.delay(620).duration(500)}>
+                    <TouchableOpacity
+                        activeOpacity={0.8}
+                        onPress={() => navigation.navigate('NhatKyCay')}
+                    >
+                        <LinearGradient
+                            colors={['#52B788', '#40916C']}
+                            start={{ x: 0, y: 0 }}
+                            end={{ x: 1, y: 0 }}
+                            style={styles.gardenShortcut}
+                        >
+                            <View style={styles.careShortcutContent}>
+                                <Ionicons name="leaf" size={24} color="#FFF" />
+                                <View style={styles.careShortcutText}>
+                                    <Text style={[styles.careTitle, { fontSize: s(16) }]}>Khu vườn của tôi</Text>
+                                    <Text style={[styles.careSubtitle, { fontSize: s(12) }]}>Theo dõi quá trình lớn lên của cây</Text>
+                                </View>
+                            </View>
+                            <Ionicons name="chevron-forward" size={20} color="#FFF" />
+                        </LinearGradient>
+                    </TouchableOpacity>
+                </Animated.View>
+
+                {/* Care Calendar Shortcut */}
+                <Animated.View entering={FadeInDown.delay(650).duration(500)}>
+                    <TouchableOpacity
+                        activeOpacity={0.8}
+                        onPress={() => navigation.navigate('LichChamSoc')}
+                    >
+                        <LinearGradient
+                            colors={['#40916C', '#2D6A4F']}
+                            start={{ x: 0, y: 0 }}
+                            end={{ x: 1, y: 0 }}
+                            style={styles.careShortcut}
+                        >
+                            <View style={styles.careShortcutContent}>
+                                <Ionicons name="calendar" size={24} color="#FFF" />
+                                <View style={styles.careShortcutText}>
+                                    <Text style={[styles.careTitle, { fontSize: s(16) }]}>Lịch chăm sóc</Text>
+                                    <Text style={[styles.careSubtitle, { fontSize: s(12) }]}>3 nhiệm vụ cần làm hôm nay</Text>
+                                </View>
+                            </View>
+                            <Ionicons name="chevron-forward" size={20} color="#FFF" />
+                        </LinearGradient>
+                    </TouchableOpacity>
+                </Animated.View>
+
                 {/* Daily Tip */}
                 <Animated.View entering={FadeInDown.delay(700).duration(500)}>
                     <TheThuyTinh style={styles.tipCard}>
@@ -258,6 +322,19 @@ const TrangChuScreen: React.FC<Props> = ({ navigation }) => {
                     </TheThuyTinh>
                 </Animated.View>
             </ScrollView>
+
+            {/* AI Floating Button */}
+            <Animated.View
+                entering={FadeInUp.delay(1000).duration(500)}
+                style={[styles.fab, { backgroundColor: mau.xanh_chinh }]}
+            >
+                <TouchableOpacity
+                    onPress={() => navigation.navigate('TroLyAi')}
+                    style={styles.fabTouch}
+                >
+                    <Ionicons name="chatbubble-ellipses" size={28} color="#FFF" />
+                </TouchableOpacity>
+            </Animated.View>
         </SafeAreaView>
     );
 };
@@ -348,6 +425,51 @@ const styles = StyleSheet.create({
     tipCard: { marginBottom: 18 },
     tipTitle: { fontWeight: '700', marginBottom: 6 },
     tipText: { lineHeight: 22 },
+    careShortcut: {
+        borderRadius: 18,
+        padding: 16,
+        marginBottom: 18,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+    },
+    careShortcutContent: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 14,
+    },
+    careShortcutText: {},
+    careTitle: { color: '#FFF', fontWeight: '700' },
+    careSubtitle: { color: 'rgba(255,255,255,0.8)', marginTop: 2 },
+    gardenShortcut: {
+        borderRadius: 18,
+        padding: 16,
+        marginBottom: 12,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+    },
+    fab: {
+        position: 'absolute',
+        right: 20,
+        bottom: 100, // Above tab bar
+        width: 60,
+        height: 60,
+        borderRadius: 30,
+        elevation: 8,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.3,
+        shadowRadius: 6,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    fabTouch: {
+        width: 60,
+        height: 60,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
 });
 
 export default TrangChuScreen;

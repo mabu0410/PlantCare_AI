@@ -20,6 +20,9 @@ import PhanHoiScreen from '../screens/phan_hoi_screen';
 import ChinhSachScreen from '../screens/chinh_sach_screen';
 import DieuKhoanScreen from '../screens/dieu_khoan_screen';
 import HuongDanQuetScreen from '../screens/huong_dan_quet_screen';
+import LichChamSocScreen from '../screens/lich_cham_soc_screen';
+import TroLyAiScreen from '../screens/tro_ly_ai_screen';
+import NhatKyCayScreen from '../screens/nhat_ky_cay_screen';
 
 const Stack = createNativeStackNavigator();
 
@@ -130,6 +133,21 @@ const DieuHuongChinh: React.FC = () => {
                 name="HuongDanQuet"
                 component={HuongDanQuetScreen}
                 options={{ animation: 'slide_from_bottom' }}
+            />
+            <Stack.Screen
+                name="LichChamSoc"
+                component={LichChamSocScreen}
+                options={{ animation: 'slide_from_right' }}
+            />
+            <Stack.Screen
+                name="TroLyAi"
+                component={TroLyAiScreen}
+                options={{ animation: 'slide_from_bottom' }}
+            />
+            <Stack.Screen
+                name="NhatKyCay"
+                component={NhatKyCayScreen}
+                options={{ animation: 'slide_from_right' }}
             />
         </Stack.Navigator>
     );

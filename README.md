@@ -1,121 +1,86 @@
-# 🌿 PlantCare AI
+# 🌿 PlantCare AI - Trợ Lý Chăm Sóc Cây Thông Minh
 
-Ứng dụng di động thông minh hỗ trợ chẩn đoán bệnh cây trồng bằng trí tuệ nhân tạo, được xây dựng với **React Native** và **Expo**.
+Ứng dụng di động cao cấp hỗ trợ chẩn đoán bệnh cây trồng bằng trí tuệ nhân tạo và quản lý chăm sóc cây toàn diện. Được xây dựng với **React Native** và **Expo**, ứng dụng mang lại trải nghiệm mượt mà với giao diện hiện đại và các tính năng thông minh thực tế.
 
 ---
 
-## 📱 Tính năng chính
+## ✨ Tính năng nổi bật
 
-- 🔍 **Chẩn đoán bệnh cây** – Chụp ảnh hoặc chọn ảnh từ thư viện để AI phân tích và chẩn đoán bệnh
-- 📋 **Chi tiết bệnh** – Xem thông tin chi tiết về từng loại bệnh, nguyên nhân và cách điều trị
-- 🏠 **Trang chủ thông minh** – Giao diện trực quan, dễ sử dụng
-- 👤 **Quản lý tài khoản** – Đăng ký, đăng nhập và quản lý hồ sơ cá nhân
-- 🎨 **Hỗ trợ Dark/Light mode** – Giao diện thích ứng với chế độ hiển thị của thiết bị
+### 🔍 Chẩn đoán & AI
+- **Chẩn đoán bệnh bằng AI**: Phân tích hình ảnh từ camera hoặc thư viện để nhận diện bệnh hại với độ chính xác cao.
+- **Trợ lý AI (Chatbot)**: Hỗ trợ giải đáp mọi thắc mắc về kỹ thuật trồng và chăm sóc cây 24/7.
+- **Hiệu ứng Khung xương (Skeleton Loaders)**: Trải nghiệm tải dữ liệu mượt mà, cao cấp trong quá trình phân tích ảnh.
+
+### 📅 Quản lý Chăm sóc
+- **Lịch Chăm Sóc (Care Calendar)**: Tự động hóa lịch trình tưới nước, bón phân, và cắt tỉa. Theo dõi các nhiệm vụ hàng ngày một cách trực quan.
+- **Nhắc nhở thông minh**: Hệ thống tự động tạo lịch nhắc nhở dựa trên loại cây và tình trạng sức khỏe sau khi chẩn đoán.
+
+### 🏠 Quản lý Vườn (Plant Diary)
+- **Nhật ký cây trồng**: Lưu trữ danh sách cây trong vườn cá nhân, theo dõi ngày trồng và ghi chú riêng.
+- **Biểu đồ sức khỏe**: Minh họa quá trình lớn lên và tình trạng sức khỏe của cây bằng biểu đồ trực quan.
+
+### 🌤️ Dữ liệu Thực tế
+- **Tích hợp Thời tiết**: Cập nhật nhiệt độ, độ ẩm thực tế và đưa ra lời khuyên chăm sóc phù hợp (VD: "Trời nắng nóng, hãy tưới thêm nước").
+- **Thư viện thông minh**: Tra cứu kiến thức về hàng trăm loại cây với các bộ lọc danh mục (Rau, Hoa, Quả, Cây cảnh).
+
+---
+
+## 🎨 Trải nghiệm Người dùng (UX/UI)
+- **Giao diện Glassmorphism**: Sử dụng hiệu ứng kính mờ hiện đại, sang trọng.
+- **Dark/Light Mode**: Hỗ trợ đầy đủ chế độ sáng và tối, thích ứng với hệ thống.
+- **Micro-animations**: Hiệu ứng chuyển cảnh và tương tác mượt mà với `react-native-reanimated`.
+- **Hệ thống Toast**: Thông báo trạng thái hoạt động tức thời và đẹp mắt.
 
 ---
 
 ## 🛠️ Công nghệ sử dụng
 
-| Công nghệ | Phiên bản |
+| Công nghệ | Mô tả |
 |---|---|
-| React Native | 0.81.5 |
-| Expo SDK | ~54.0.0 |
-| React | 19.1.0 |
-| TypeScript | ~5.9.2 |
-| React Navigation | v7 |
-| Zustand | ^5.0.3 |
-| Axios | ^1.7.9 |
-| Lottie React Native | ^7.1.0 |
+| **React Native** | Framework phát triển chính |
+| **Expo SDK 54** | Nền tảng hỗ trợ phát triển & build ứng dụng |
+| **TypeScript** | Đảm bảo tính nhất quán và chặt chẽ của mã nguồn |
+| **Zustand** | Quản lý state gọn nhẹ và hiệu quả |
+| **Reanimated 3** | Xử lý các hiệu ứng chuyển động cao cấp |
+| **AsyncStorage** | Lưu trữ dữ liệu ứng dụng cục bộ |
+| **Expo Image Picker**| Xử lý chọn ảnh từ thư viện |
 
 ---
 
-## 📂 Cấu trúc thư mục
+## 📂 Cấu trúc thư mục chính
 
-```
-Do_An/
-├── assets/             # Ảnh, icon, animation
-├── src/
-│   ├── animations/     # File Lottie animation
-│   ├── components/     # Các component dùng chung
-│   ├── hooks/          # Custom hooks
-│   ├── navigation/     # Cấu hình điều hướng
-│   ├── screens/        # Các màn hình của ứng dụng
-│   ├── services/       # Gọi API backend
-│   ├── store/          # Quản lý state (Zustand)
-│   ├── theme/          # Màu sắc, typography
-│   ├── types/          # Định nghĩa TypeScript
-│   └── utils/          # Hàm tiện ích, hằng số
-├── App.tsx             # Điểm vào ứng dụng
-├── app.json            # Cấu hình Expo
-├── babel.config.js
-├── package.json
-└── tsconfig.json
-```
+- `src/screens/`: Chứa toàn bộ các màn hình (Trang chủ, Camera, Nhật ký, Lịch chăm sóc, Trợ lý AI...).
+- `src/services/`: Các dịch vụ xử lý logic (Thời tiết, Chăm sóc, API...).
+- `src/components/`: Các thành phần giao diện dùng chung (Card, Button, Skeleton, Toast...).
+- `src/theme/`: Quản lý bảng màu và chủ đề ứng dụng.
+- `src/store/`: Quản lý trạng thái ứng dụng bằng Zustand.
 
 ---
 
 ## 🚀 Hướng dẫn cài đặt & chạy
 
-### Yêu cầu
-- [Node.js](https://nodejs.org/) >= 18
-- [Expo CLI](https://docs.expo.dev/get-started/installation/)
-- [Expo Go](https://expo.dev/go) trên điện thoại (để test nhanh)
-
-### Cài đặt
-
+### Cài đặt nhanh
 ```bash
-# 1. Clone repository
+# Clone dự án
 git clone <repository-url>
-cd Do_An
+cd PlantCare_AI
 
-# 2. Cài đặt dependencies
+# Cài đặt thư viện
 npm install
-```
 
-### Chạy ứng dụng
-
-```bash
-# Khởi động Expo dev server
+# Khởi chạy ứng dụng
 npm start
-
-# Chạy trên Android
-npm run android
-
-# Chạy trên iOS
-npm run ios
-
-# Chạy trên Web
-npm run web
 ```
 
-Sau khi chạy `npm start`, quét QR Code bằng ứng dụng **Expo Go** trên điện thoại để xem kết quả.
+### Chạy trên các nền tảng
+- Nhấn `a` để chạy trên Android Emulator.
+- Nhấn `i` để chạy trên iOS Simulator.
+- Quét mã QR bằng ứng dụng **Expo Go** để trải nghiệm trên điện thoại thật.
 
 ---
 
-## 🔧 Cấu hình môi trường
-
-Tạo file `.env` tại thư mục gốc và điền các biến sau:
-
-```
-EXPO_PUBLIC_API_URL=https://your-api-url.com
-```
+## 📄 Thông tin dự án
+Dự án được phát triển với mục tiêu mang lại giải pháp công nghệ hiện đại cho người yêu cây cảnh, kết hợp giữa AI và trải nghiệm người dùng cao cấp.
 
 ---
-
-## 📦 Build ứng dụng
-
-```bash
-# Build APK cho Android
-eas build --platform android
-
-# Build IPA cho iOS
-eas build --platform ios
-```
-
-> Yêu cầu cài đặt [EAS CLI](https://docs.expo.dev/eas/): `npm install -g eas-cli`
-
----
-
-## 📄 Giấy phép
-
-Dự án này được phát triển cho mục đích đồ án tốt nghiệp.
+*Phát triển bởi Đội ngũ PlantCare AI.*
