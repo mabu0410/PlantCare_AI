@@ -14,10 +14,15 @@ import Animated, { FadeInDown, ZoomIn } from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
 import { useChuDe } from '../theme/chu_de';
 import { chamSocService, NhatKyCay } from '../services/cham_soc_service';
+import { useThongBaoToast } from '../components/thong_bao_toast';
 import TheThuyTinh from '../components/the_thuy_tinh';
 import { useNgonNgu, useCoChu } from '../utils/ngon_ngu';
 
-const NhatKyCayScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
+interface Props {
+    navigation: any;
+}
+
+const NhatKyCayScreen: React.FC<Props> = ({ navigation }) => {
     const { mau, laToi } = useChuDe();
     const t = useNgonNgu();
     const s = useCoChu();
@@ -75,7 +80,8 @@ const NhatKyCayScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
         <Animated.View entering={FadeInDown.delay(index * 100).duration(400)}>
             <TouchableOpacity
                 activeOpacity={0.8}
-                onPress={() => Alert.alert('Thông báo', 'Chi tiết nhật ký đang được phát triển')}
+                onPress={() => navigation.navigate('ChiTietNhatKy', { cay: item })}
+                style={{ width: '100%', marginBottom: 16 }}
             >
                 <TheThuyTinh style={styles.card}>
                     <View style={styles.cardRow}>
@@ -109,10 +115,10 @@ const NhatKyCayScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
                 </TouchableOpacity>
                 <Text style={[styles.title, { color: mau.chu_chinh, fontSize: s(22) }]}>Khu vườn của tôi 🏡</Text>
                 <TouchableOpacity
-                    style={styles.addBtn}
-                    onPress={() => Alert.alert('Thông báo', 'Tính năng thêm cây đang được phát triển')}
+                    style={[styles.addBtn, { backgroundColor: mau.xanh_chinh }]}
+                    onPress={() => navigation.navigate('ThemCay')}
                 >
-                    <Ionicons name="add" size={24} color={mau.xanh_chinh} />
+                    <Ionicons name="add" size={24} color="#FFF" />
                 </TouchableOpacity>
             </View>
 

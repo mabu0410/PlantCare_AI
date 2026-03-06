@@ -10,7 +10,9 @@ import {
     Alert,
     Platform,
     Image,
+    ImageBackground,
 } from 'react-native';
+import { BlurView } from 'expo-blur';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -56,11 +58,20 @@ const TaiKhoanScreen: React.FC<Props> = ({ navigation }) => {
                         {/* Decorative */}
                         <View style={styles.decor} />
 
+                        {/* Cover Image Background */}
+                        <ImageBackground
+                            source={require('../../assets/plant_detail_header_3d.png')}
+                            style={styles.coverImagePill}
+                            imageStyle={{ opacity: 0.4 }}
+                        >
+                            <BlurView intensity={20} style={StyleSheet.absoluteFill} tint="dark" />
+                        </ImageBackground>
+
                         <View style={styles.avatarCircle}>
                             {user.anh_dai_dien ? (
                                 <Image source={{ uri: user.anh_dai_dien }} style={styles.avatarImage} />
                             ) : (
-                                <Text style={{ fontSize: s(36) }}>👨‍🌾</Text>
+                                <Image source={require('../../assets/avatar_farmer_3d.png')} style={styles.avatarImage} />
                             )}
                         </View>
                         <Text style={[styles.userName, { fontSize: s(22) }]}>{user.ten}</Text>
@@ -172,6 +183,12 @@ const styles = StyleSheet.create({
         padding: 24,
         alignItems: 'center',
         overflow: 'hidden',
+        position: 'relative',
+    },
+    coverImagePill: {
+        ...StyleSheet.absoluteFillObject,
+        width: '100%',
+        height: '100%',
     },
     avatarCircle: {
         width: 80,

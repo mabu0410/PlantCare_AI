@@ -16,6 +16,7 @@ import CaiDatScreen from '../screens/cai_dat_screen';
 import ChinhSuaHoSoScreen from '../screens/chinh_sua_ho_so_screen';
 import DaLuuScreen from '../screens/da_luu_screen';
 import VeUngDungScreen from '../screens/ve_ung_dung_screen';
+import ThemCayScreen from '../screens/them_cay_screen';
 import ThongBaoScreen from '../screens/thong_bao_screen';
 import PhanHoiScreen from '../screens/phan_hoi_screen';
 import ChinhSachScreen from '../screens/chinh_sach_screen';
@@ -24,8 +25,36 @@ import HuongDanQuetScreen from '../screens/huong_dan_quet_screen';
 import LichChamSocScreen from '../screens/lich_cham_soc_screen';
 import TroLyAiScreen from '../screens/tro_ly_ai_screen';
 import NhatKyCayScreen from '../screens/nhat_ky_cay_screen';
+import ChiTietNhatKyScreen from '../screens/chi_tiet_nhat_ky_screen';
 
-const Stack = createNativeStackNavigator();
+export type RootStackParamList = {
+    Splash: undefined;
+    Onboarding: undefined;
+    DangNhap: undefined;
+    DangKy: undefined;
+    QuenMatKhau: undefined;
+    TabChinh: undefined;
+    Camera: undefined;
+    XemTruocAnh: { imageUri: string };
+    KetQua: { result: any };
+    ChiTietBenh: { disease: any };
+    CaiDat: undefined;
+    ChinhSuaHoSo: undefined;
+    DaLuu: undefined;
+    VeUngDung: undefined;
+    ThemCay: undefined;
+    ThongBao: undefined;
+    PhanHoi: undefined;
+    ChinhSach: undefined;
+    DieuKhoan: undefined;
+    HuongDanQuet: undefined;
+    LichChamSoc: undefined;
+    TroLyAi: undefined;
+    NhatKyCay: undefined;
+    ChiTietNhatKy: { cay: any };
+};
+
+const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const DieuHuongChinh: React.FC = () => {
     return (
@@ -140,6 +169,7 @@ const DieuHuongChinh: React.FC = () => {
                 component={HuongDanQuetScreen}
                 options={{ animation: 'slide_from_bottom' }}
             />
+            <Stack.Screen name="ChiTietNhatKy" component={ChiTietNhatKyScreen} />
             <Stack.Screen
                 name="LichChamSoc"
                 component={LichChamSocScreen}
