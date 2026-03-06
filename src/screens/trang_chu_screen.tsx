@@ -9,6 +9,7 @@ import {
     TouchableOpacity,
     FlatList,
     Dimensions,
+    Image,
 } from 'react-native';
 import Animated, {
     FadeInDown,
@@ -16,10 +17,10 @@ import Animated, {
     FadeInUp,
     useSharedValue,
     useAnimatedStyle,
-    withRepeat,
     withTiming,
     withSequence,
 } from 'react-native-reanimated';
+import { GestureDetector, Gesture } from 'react-native-gesture-handler';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useChuDe } from '../theme/chu_de';
@@ -32,7 +33,16 @@ import { MEO_NGAY_MAU } from '../utils/du_lieu_mau';
 import { useNgonNgu, useCoChu } from '../utils/ngon_ngu';
 import { thoitietService, ThoiTiet } from '../services/thoitiet_service';
 
-const { width } = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
+
+// Thêm Giới hạn kéo thả cho nút Chatbot FAB
+const FAB_SIZE = 60;
+const BOUNDARIES = {
+    xMin: 20,
+    xMax: width - 20 - FAB_SIZE,
+    yMin: 60,
+    yMax: height - 120 - FAB_SIZE,
+};
 
 interface Props {
     navigation: any;
@@ -60,14 +70,18 @@ const TrangChuScreen: React.FC<Props> = ({ navigation }) => {
     // Pulse animation for scan button
     const pulseScale = useSharedValue(1);
     React.useEffect(() => {
-        pulseScale.value = withRepeat(
-            withSequence(
-                withTiming(1.04, { duration: 1200 }),
-                withTiming(1, { duration: 1200 })
-            ),
-            -1,
-            true
-        );
+        const triggerPulse = () => {
+            pulseScale.value = withSequence(
+                withTiming(1.04, { duration: 400 }),
+                withTiming(1, { duration: 400 }),
+                withTiming(1.04, { duration: 400 }),
+                withTiming(1, { duration: 400 })
+            );
+        };
+
+        triggerPulse();
+        const interval = setInterval(triggerPulse, 5000);
+        return () => clearInterval(interval);
     }, [pulseScale]);
 
     const pulseStyle = useAnimatedStyle(() => ({
@@ -77,6 +91,38 @@ const TrangChuScreen: React.FC<Props> = ({ navigation }) => {
     const handleCamera = useCallback(() => {
         navigation.navigate('Camera');
     }, [navigation]);
+
+    // --- Draggable FAB Logic ---
+    const translateX = useSharedValue(BOUNDARIES.xMax); // Bắt đầu ở cạnh phải
+    const translateY = useSharedValue(BOUNDARIES.yMax); // Bắt đầu ở góc dưới
+
+    const panGesture = Gesture.Pan()
+        .onChange((event) => {
+            // Cập nhật vị trí dựa vào lượng thay đổi của cử chỉ (changeX/changeY)
+            const nextX = translateX.value + event.changeX;
+            const nextY = translateY.value + event.changeY;
+
+            // Giới hạn không cho kéo ra ngoài viền màn hình
+            translateX.value = Math.max(BOUNDARIES.xMin, Math.min(nextX, BOUNDARIES.xMax));
+            translateY.value = Math.max(BOUNDARIES.yMin, Math.min(nextY, BOUNDARIES.yMax));
+        })
+        .onEnd(() => {
+            // Khi thả tay, tự động hít (snap) về cạnh trái hoặc phải gần nhất
+            if (translateX.value < width / 2 - FAB_SIZE / 2) {
+                translateX.value = withTiming(BOUNDARIES.xMin, { duration: 300 });
+            } else {
+                translateX.value = withTiming(BOUNDARIES.xMax, { duration: 300 });
+            }
+        });
+
+    const fabStyle = useAnimatedStyle(() => {
+        return {
+            transform: [
+                { translateX: translateX.value },
+                { translateY: translateY.value },
+            ],
+        };
+    });
 
     const renderLichSuItem = useCallback(
         ({ item, index }: any) => (
@@ -99,12 +145,19 @@ const TrangChuScreen: React.FC<Props> = ({ navigation }) => {
                     <View
                         style={[
                             styles.historyThumb,
-                            { backgroundColor: mauMucDo(item.muc_do, mau) + '20' },
+                            { backgroundColor: mauMucDo(item.muc_do, mau) + '20', overflow: 'hidden' },
                         ]}
                     >
-                        <Text style={{ fontSize: 24 }}>
-                            {item.loai_cay === 'Cà chua' ? '🍅' : item.loai_cay === 'Ớt' ? '🌶️' : '🌿'}
-                        </Text>
+                        <Image
+                            source={{
+                                uri: item.loai_cay === 'Cà chua'
+                                    ? 'https://images.unsplash.com/photo-1592841200221-a6898f307baa?auto=format&fit=crop&w=100&q=80'
+                                    : item.loai_cay === 'Ớt'
+                                        ? 'https://images.unsplash.com/photo-1588015091216-921c17da62dc?auto=format&fit=crop&w=100&q=80'
+                                        : 'https://images.unsplash.com/photo-1550081699-dd277e923e3e?auto=format&fit=crop&w=100&q=80'
+                            }}
+                            style={{ width: '100%', height: '100%' }}
+                        />
                     </View>
                     <View style={styles.historyInfo}>
                         <Text
@@ -148,9 +201,12 @@ const TrangChuScreen: React.FC<Props> = ({ navigation }) => {
                         </Text>
                     </View>
                     <TouchableOpacity
-                        style={[styles.avatarCircle, { backgroundColor: mau.xanh_chinh + '20' }]}
+                        style={[styles.avatarCircle, { backgroundColor: mau.xanh_chinh + '20', overflow: 'hidden' }]}
                     >
-                        <Ionicons name="person" size={22} color={mau.xanh_chinh} />
+                        <Image
+                            source={{ uri: 'https://api.dicebear.com/7.x/bottts/png?seed=User123&backgroundColor=b6e3f4' }}
+                            style={{ width: '100%', height: '100%' }}
+                        />
                     </TouchableOpacity>
                 </Animated.View>
 
@@ -323,18 +379,20 @@ const TrangChuScreen: React.FC<Props> = ({ navigation }) => {
                 </Animated.View>
             </ScrollView>
 
-            {/* AI Floating Button */}
-            <Animated.View
-                entering={FadeInUp.delay(1000).duration(500)}
-                style={[styles.fab, { backgroundColor: mau.xanh_chinh }]}
-            >
-                <TouchableOpacity
-                    onPress={() => navigation.navigate('TroLyAi')}
-                    style={styles.fabTouch}
+            {/* Draggable AI Floating Button */}
+            <GestureDetector gesture={panGesture}>
+                <Animated.View
+                    entering={FadeInUp.delay(1000).duration(500)}
+                    style={[styles.fab, fabStyle, { backgroundColor: mau.xanh_chinh }]}
                 >
-                    <Ionicons name="chatbubble-ellipses" size={28} color="#FFF" />
-                </TouchableOpacity>
-            </Animated.View>
+                    <TouchableOpacity
+                        onPress={() => navigation.navigate('TroLyAi')}
+                        style={styles.fabTouch}
+                    >
+                        <Ionicons name="chatbubble-ellipses" size={28} color="#FFF" />
+                    </TouchableOpacity>
+                </Animated.View>
+            </GestureDetector>
         </SafeAreaView>
     );
 };
@@ -364,7 +422,7 @@ const styles = StyleSheet.create({
         overflow: 'hidden',
         shadowColor: '#2D6A4F',
         shadowOffset: { width: 0, height: 8 },
-        shadowOpacity: 0.25,
+        shadowOpacity: 0.1,
         shadowRadius: 16,
         elevation: 8,
     },
@@ -451,8 +509,8 @@ const styles = StyleSheet.create({
     },
     fab: {
         position: 'absolute',
-        right: 20,
-        bottom: 100, // Above tab bar
+        top: 0,
+        left: 0,
         width: 60,
         height: 60,
         borderRadius: 30,
@@ -463,6 +521,7 @@ const styles = StyleSheet.create({
         shadowRadius: 6,
         justifyContent: 'center',
         alignItems: 'center',
+        zIndex: 999,
     },
     fabTouch: {
         width: 60,

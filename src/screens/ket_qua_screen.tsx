@@ -9,6 +9,7 @@ import {
     SafeAreaView,
     Image,
     ActivityIndicator,
+    Dimensions,
 } from 'react-native';
 import Animated, {
     FadeInDown,
@@ -33,6 +34,7 @@ import type { KetQuaPhanTich } from '../types/kieu_du_lieu';
 import { KetQuaSkeleton } from '../components/khung_xuong_loader';
 import { chamSocService } from '../services/cham_soc_service';
 import { useThongBaoToast } from '../components/thong_bao_toast';
+import LottieView from 'lottie-react-native';
 
 interface Props {
     navigation: any;
@@ -47,6 +49,15 @@ const KetQuaScreen: React.FC<Props> = ({ navigation, route }) => {
     const { hienToast } = useThongBaoToast();
     const [ketQua, setKetQua] = useState<KetQuaPhanTich | null>(route.params?.ketQua || null);
     const [activeTab, setActiveTab] = useState(0);
+    const scrollViewRef = React.useRef<ScrollView>(null);
+    const { width } = Dimensions.get('window');
+
+    const handleTabPress = (idx: number) => {
+        setActiveTab(idx);
+        if (scrollViewRef.current) {
+            scrollViewRef.current.scrollTo({ x: idx * width, animated: true });
+        }
+    };
 
     const imageUri = route.params?.imageUri;
 
@@ -105,9 +116,14 @@ const KetQuaScreen: React.FC<Props> = ({ navigation, route }) => {
                     <Text style={[styles.headerTitle, { color: mau.chu_chinh, fontSize: s(18) }]}>{t('kq_tieude_chinh')}</Text>
                     <View style={{ width: 40 }} />
                 </View>
-                <KetQuaSkeleton />
-                <View style={{ alignItems: 'center', padding: 20 }}>
-                    <Text style={[styles.loadingText, { color: mau.chu_phu, fontSize: s(14) }]}>{loadingText}</Text>
+                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                    <LottieView
+                        source={{ uri: 'https://lottie.host/1c7e9bed-7201-4993-80fd-e47bedf3fc76/R30J3wI8vO.json' }}
+                        autoPlay
+                        loop
+                        style={{ width: 250, height: 250 }}
+                    />
+                    <Text style={[styles.loadingText, { color: mau.chu_phu, fontSize: s(16), marginTop: 20 }]}>{loadingText}</Text>
                 </View>
             </SafeAreaView>
         );
@@ -153,9 +169,10 @@ const KetQuaScreen: React.FC<Props> = ({ navigation, route }) => {
                     {imageUri ? (
                         <Image source={{ uri: imageUri }} style={styles.resultImage} />
                     ) : (
-                        <View style={[styles.resultImage, styles.mockImg]}>
-                            <Text style={{ fontSize: 48 }}>🍃</Text>
-                        </View>
+                        <Image
+                            source={{ uri: 'https://images.unsplash.com/photo-1611095567219-8fa7d4d8fcfe?auto=format&fit=crop&w=600&q=80' }}
+                            style={styles.resultImage}
+                        />
                     )}
                     {/* Bounding box overlay */}
                     <View style={[styles.boundingBox, { borderColor: mauMucDo(ketQua.muc_do, mau) }]} />
@@ -208,7 +225,7 @@ const KetQuaScreen: React.FC<Props> = ({ navigation, route }) => {
                                         borderBottomWidth: 2,
                                     },
                                 ]}
-                                onPress={() => setActiveTab(idx)}
+                                onPress={() => handleTabPress(idx)}
                             >
                                 <Text
                                     style={[
@@ -223,21 +240,38 @@ const KetQuaScreen: React.FC<Props> = ({ navigation, route }) => {
                     </View>
 
                     {/* Tab content */}
-                    <View style={styles.tabContent}>
-                        {tabContent[activeTab].length > 0 ? (
-                            tabContent[activeTab].map((item, idx) => (
-                                <View key={idx} style={[styles.listItem, { borderLeftColor: mau.xanh_chinh }]}>
-                                    <View style={[styles.listBullet, { backgroundColor: mau.xanh_chinh }]}>
-                                        <Text style={[styles.bulletText, { fontSize: s(12) }]}>{idx + 1}</Text>
+                    <View style={styles.tabContentContainer}>
+                        <ScrollView
+                            ref={scrollViewRef}
+                            horizontal
+                            pagingEnabled
+                            showsHorizontalScrollIndicator={false}
+                            onMomentumScrollEnd={(e) => {
+                                const newIndex = Math.round(e.nativeEvent.contentOffset.x / width);
+                                setActiveTab(newIndex);
+                            }}
+                        >
+                            {tabContent.map((contentList, tabIdx) => (
+                                <View key={tabIdx} style={{ width: width }}>
+                                    <View style={styles.tabContent}>
+                                        {contentList.length > 0 ? (
+                                            contentList.map((item, idx) => (
+                                                <View key={idx} style={[styles.listItem, { borderLeftColor: mau.xanh_chinh }]}>
+                                                    <View style={[styles.listBullet, { backgroundColor: mau.xanh_chinh }]}>
+                                                        <Text style={[styles.bulletText, { fontSize: s(12) }]}>{idx + 1}</Text>
+                                                    </View>
+                                                    <Text style={[styles.listText, { color: mau.chu_chinh, fontSize: s(14) }]}>{item}</Text>
+                                                </View>
+                                            ))
+                                        ) : (
+                                            <Text style={[styles.emptyText, { color: mau.chu_nhat, fontSize: s(14) }]}>
+                                                {t('kq_trong')}
+                                            </Text>
+                                        )}
                                     </View>
-                                    <Text style={[styles.listText, { color: mau.chu_chinh, fontSize: s(14) }]}>{item}</Text>
                                 </View>
-                            ))
-                        ) : (
-                            <Text style={[styles.emptyText, { color: mau.chu_nhat, fontSize: s(14) }]}>
-                                {t('kq_trong')}
-                            </Text>
-                        )}
+                            ))}
+                        </ScrollView>
                     </View>
                 </Animated.View>
 
@@ -372,7 +406,8 @@ const styles = StyleSheet.create({
     },
     tab: { flex: 1, paddingVertical: 12, alignItems: 'center' },
     tabText: { fontWeight: '700' },
-    tabContent: { paddingHorizontal: 20, marginBottom: 20 },
+    tabContentContainer: { paddingBottom: 20 },
+    tabContent: { paddingHorizontal: 20 },
     listItem: {
         flexDirection: 'row',
         alignItems: 'flex-start',

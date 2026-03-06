@@ -7,6 +7,7 @@ import {
     TouchableOpacity,
     Dimensions,
     Alert,
+    Pressable,
 } from 'react-native';
 import Animated, {
     useSharedValue,
@@ -18,6 +19,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
+import * as Haptics from 'expo-haptics';
 import { useChuDe } from '../theme/chu_de';
 import { useNgonNgu, useCoChu } from '../utils/ngon_ngu';
 import { usePhanTichStore } from '../store/phan_tich_store';
@@ -53,7 +55,20 @@ const CameraScreen: React.FC<Props> = ({ navigation }) => {
         opacity: guideOpacity.value,
     }));
 
+    const shutterScale = useSharedValue(1);
+    const shutterAnimStyle = useAnimatedStyle(() => ({
+        transform: [{ scale: shutterScale.value }],
+    }));
+
     const handleCapture = useCallback(() => {
+        // Haptic Feedback
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+
+        // Button scale down
+        shutterScale.value = withTiming(0.8, { duration: 100 }, () => {
+            shutterScale.value = withTiming(1, { duration: 100 });
+        });
+
         // Flash effect
         setShowFlash(true);
         setTimeout(() => {
@@ -61,7 +76,7 @@ const CameraScreen: React.FC<Props> = ({ navigation }) => {
             // Mock captured image
             datAnhChup('captured_image');
             navigation.navigate('XemTruocAnh', { imageUri: null });
-        }, 300);
+        }, 150);
     }, [datAnhChup, navigation]);
 
     const handleGallery = useCallback(async () => {
@@ -143,9 +158,11 @@ const CameraScreen: React.FC<Props> = ({ navigation }) => {
                 </TouchableOpacity>
 
                 {/* Shutter */}
-                <TouchableOpacity style={styles.shutterOuter} onPress={handleCapture}>
-                    <View style={styles.shutterInner} />
-                </TouchableOpacity>
+                <Pressable onPress={handleCapture}>
+                    <Animated.View style={[styles.shutterOuter, shutterAnimStyle]}>
+                        <View style={styles.shutterInner} />
+                    </Animated.View>
+                </Pressable>
 
                 {/* Spacer */}
                 <View style={styles.galleryBtn} />

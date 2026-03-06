@@ -107,7 +107,7 @@ const DangNhapScreen: React.FC<Props> = ({ navigation }) => {
                                 </View>
                             </View>
 
-                            <TouchableOpacity style={styles.forgotBtn}>
+                            <TouchableOpacity style={styles.forgotBtn} onPress={() => navigation.navigate('QuenMatKhau')}>
                                 <Text style={[styles.forgotText, { color: mau.xanh_chinh, fontSize: s(14) }]}>
                                     {t('dn_quenmatkhau')}
                                 </Text>

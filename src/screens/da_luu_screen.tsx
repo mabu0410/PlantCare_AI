@@ -7,6 +7,7 @@ import {
     SafeAreaView,
     TouchableOpacity,
     FlatList,
+    Image,
 } from 'react-native';
 import Animated, { FadeInDown, FadeInRight, Layout } from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
@@ -73,7 +74,11 @@ const DaLuuScreen: React.FC<Props> = ({ navigation }) => {
 
     const EmptyState = () => (
         <View style={styles.emptyState}>
-            <Text style={{ fontSize: s(64) }}>🔖</Text>
+            <Image
+                source={require('../../assets/empty_garden_3d.png')}
+                style={styles.emptyImage}
+                resizeMode="contain"
+            />
             <Text style={[styles.emptyTitle, { color: mau.chu_chinh, fontSize: s(20) }]}>{t('dl_chualuu')}</Text>
             <Text style={[styles.emptySubtitle, { color: mau.chu_phu, fontSize: s(14) }]}>
                 {t('dl_luuy_chualuu')}
@@ -152,6 +157,7 @@ const styles = StyleSheet.create({
     },
     emptyTitle: { fontWeight: '700' },
     emptySubtitle: { textAlign: 'center', paddingHorizontal: 40 },
+    emptyImage: { width: 180, height: 180, marginBottom: 12 },
 });
 
 export default DaLuuScreen;

@@ -10,6 +10,7 @@ import {
     FlatList,
     Alert,
     TextInput,
+    Image,
 } from 'react-native';
 import Animated, { FadeInDown, FadeInRight, Layout } from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
@@ -125,7 +126,11 @@ const LichSuScreen: React.FC<Props> = ({ navigation }) => {
 
     const EmptyState = () => (
         <View style={styles.emptyState}>
-            <Text style={{ fontSize: s(64) }}>🔍</Text>
+            <Image
+                source={require('../../assets/empty_garden_3d.png')}
+                style={styles.emptyImage}
+                resizeMode="contain"
+            />
             <Text style={[styles.emptyTitle, { color: mau.chu_chinh, fontSize: s(20) }]}>{t('ls_chuacols')}</Text>
             <Text style={[styles.emptySubtitle, { color: mau.chu_phu, fontSize: s(14) }]}>
                 {t('ls_batdauquet')}
@@ -270,6 +275,7 @@ const styles = StyleSheet.create({
     },
     emptyTitle: { fontWeight: '700' },
     emptySubtitle: { textAlign: 'center' },
+    emptyImage: { width: 180, height: 180, marginBottom: 12 },
 });
 
 export default LichSuScreen;

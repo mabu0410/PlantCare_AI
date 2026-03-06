@@ -7,6 +7,7 @@ import {
     Dimensions,
     TouchableOpacity,
     FlatList,
+    Image,
 } from 'react-native';
 import Animated, {
     useSharedValue,
@@ -35,19 +36,19 @@ const OnboardingScreen: React.FC<Props> = ({ navigation }) => {
     const SLIDES = React.useMemo(() => [
         {
             id: '1',
-            icon: '📸',
+            image: require('../../assets/onboarding_scan_3d.png'),
             title: t('ob_s1_t'),
             subtitle: t('ob_s1_m'),
         },
         {
             id: '2',
-            icon: '🤖',
+            image: require('../../assets/onboarding_ai_bot.png'),
             title: t('ob_s2_t'),
             subtitle: t('ob_s2_m'),
         },
         {
             id: '3',
-            icon: '💊',
+            image: require('../../assets/onboarding_care_3d.png'),
             title: t('ob_s3_t'),
             subtitle: t('ob_s3_m'),
         },
@@ -74,8 +75,8 @@ const OnboardingScreen: React.FC<Props> = ({ navigation }) => {
 
     const renderSlide = ({ item }: { item: any }) => (
         <Animated.View entering={FadeIn.duration(400)} style={[styles.slide, { width }]}>
-            <View style={styles.iconContainer}>
-                <Text style={[styles.icon, { fontSize: s(64) }]}>{item.icon}</Text>
+            <View style={styles.imageContainer}>
+                <Image source={item.image} style={styles.image} resizeMode="contain" />
             </View>
             <Text style={[styles.title, { color: mau.chu_chinh, fontSize: s(28) }]}>{item.title}</Text>
             <Text style={[styles.subtitle, { color: mau.chu_phu, fontSize: s(16) }]}>{item.subtitle}</Text>
@@ -153,17 +154,16 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         paddingHorizontal: 40,
     },
-    iconContainer: {
-        width: 140,
-        height: 140,
-        borderRadius: 70,
-        backgroundColor: 'rgba(82,183,136,0.12)',
+    imageContainer: {
+        width: width * 0.8,
+        height: width * 0.8,
         justifyContent: 'center',
         alignItems: 'center',
-        marginBottom: 40,
+        marginBottom: 30,
     },
-    icon: {
-        fontSize: 64,
+    image: {
+        width: '100%',
+        height: '100%',
     },
     title: {
         fontWeight: '800',

@@ -6,6 +6,7 @@ import SplashScreen from '../screens/splash_screen';
 import OnboardingScreen from '../screens/onboarding_screen';
 import DangNhapScreen from '../screens/dang_nhap_screen';
 import DangKyScreen from '../screens/dang_ky_screen';
+import QuenMatKhauScreen from '../screens/quen_mat_khau_screen';
 import DieuHuongTab from './dieu_huong_tab';
 import CameraScreen from '../screens/camera_screen';
 import XemTruocAnhScreen from '../screens/xem_truoc_anh_screen';
@@ -56,6 +57,11 @@ const DieuHuongChinh: React.FC = () => {
             <Stack.Screen
                 name="DangKy"
                 component={DangKyScreen}
+                options={{ animation: 'slide_from_right' }}
+            />
+            <Stack.Screen
+                name="QuenMatKhau"
+                component={QuenMatKhauScreen}
                 options={{ animation: 'slide_from_right' }}
             />
 
