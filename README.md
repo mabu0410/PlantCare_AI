@@ -1,4 +1,7 @@
 # 🌿 PlantCare AI - Trợ Lý Chăm Sóc Cây Thông Minh
+**Version: 2.0.0 (Bản thử nghiệm)**
+
+> **Lưu ý:** Đây là bản thử nghiệm. Đội ngũ đang tích cực phát triển bản chính thức, hãy chờ đợi nhé! 🚀
 
 Ứng dụng di động cao cấp hỗ trợ chẩn đoán bệnh cây trồng bằng trí tuệ nhân tạo và quản lý chăm sóc cây toàn diện. Được xây dựng với **React Native**, ứng dụng mang lại trải nghiệm mượt mà với giao diện hiện đại (Premium UX/UI) tích hợp các hiệu ứng 3D và tính năng thông minh thực tế.
 
