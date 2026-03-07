@@ -28,6 +28,7 @@ const ThemCayScreen: React.FC<Props> = ({ navigation }) => {
 
     const [ten, setTen] = useState('');
     const [loai, setLoai] = useState('');
+    const [ghiChu, setGhiChu] = useState('');
 
     const handleLuu = async () => {
         if (!ten.trim() || !loai.trim()) {
@@ -42,8 +43,11 @@ const ThemCayScreen: React.FC<Props> = ({ navigation }) => {
             ten: ten.trim(),
             loai: loai.trim(),
             ngay_trong: ngayTrong,
-            ghi_chu: '',
+            ghi_chu: ghiChu.trim(),
         });
+
+        // Tự động tạo nhiệm vụ cho cây mới
+        await chamSocService.taoNhiemVuTuDong(ten.trim(), loai.trim());
 
         hienToast('Đã thêm cây mới', 'thanh_cong');
         navigation.goBack();
@@ -96,6 +100,19 @@ const ThemCayScreen: React.FC<Props> = ({ navigation }) => {
                                 placeholderTextColor={mau.chu_nhat}
                                 value={loai}
                                 onChangeText={setLoai}
+                            />
+                        </View>
+
+                        <View style={styles.inputGroup}>
+                            <Text style={[styles.label, { color: mau.chu_phu }]}>Ghi chú (Tùy chọn)</Text>
+                            <TextInput
+                                style={[styles.input, { backgroundColor: mau.nen, color: mau.chu_chinh, borderColor: mau.vien, height: 100 }]}
+                                placeholder="Ghi chú về tình trạng cây..."
+                                placeholderTextColor={mau.chu_nhat}
+                                multiline
+                                textAlignVertical="top"
+                                value={ghiChu}
+                                onChangeText={setGhiChu}
                             />
                         </View>
 

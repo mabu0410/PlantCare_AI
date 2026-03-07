@@ -16,6 +16,7 @@ import Animated, { FadeInDown, FadeInUp } from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
 import { useChuDe } from '../theme/chu_de';
 import { useNgonNgu, useCoChu } from '../utils/ngon_ngu';
+import { geminiService, Message as GeminiMessage } from '../services/gemini_service';
 
 interface TinNhan {
     id: string;
@@ -42,12 +43,13 @@ const TroLyAiScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
     const [dangPhanHoi, setDangPhanHoi] = useState(false);
     const flatListRef = useRef<FlatList>(null);
 
-    const goiTinNhan = () => {
+    const goiTinNhan = async () => {
         if (!nhap.trim()) return;
 
+        const userText = nhap.trim();
         const tinMoi: TinNhan = {
             id: Date.now().toString(),
-            noi_dung: nhap.trim(),
+            noi_dung: userText,
             la_nguoi_gui: true,
             ngay: new Date(),
         };
@@ -56,26 +58,31 @@ const TroLyAiScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
         setNhap('');
         setDangPhanHoi(true);
 
-        // Simulate AI response
-        setTimeout(() => {
+        try {
+            // Chuyển đổi lịch sử tin nhắn sang định dạng của Gemini
+            const lichSu: GeminiMessage[] = tinNhan.slice(1).map(msg => ({
+                role: msg.la_nguoi_gui ? 'user' : 'model',
+                parts: [{ text: msg.noi_dung }]
+            }));
+
+            const response = await geminiService.chat(userText, lichSu);
+
             const phanHoiAi: TinNhan = {
                 id: (Date.now() + 1).toString(),
-                noi_dung: layCauTraLoi(nhap.trim()),
+                noi_dung: response,
                 la_nguoi_gui: false,
                 ngay: new Date(),
             };
             setTinNhan(prev => [...prev, phanHoiAi]);
+        } catch (error) {
+            console.error('Chat error:', error);
+            // Có thể thêm thông báo lỗi vào chat UI nếu muốn
+        } finally {
             setDangPhanHoi(false);
-        }, 1500);
+        }
     };
 
-    const layCauTraLoi = (cauHoi: string) => {
-        const q = cauHoi.toLowerCase();
-        if (q.includes('tưới water')) return 'Bạn nên tưới cây vào lúc sáng sớm hoặc chiều mát. Tránh tưới vào buổi trưa nắng gắt nhé!';
-        if (q.includes('vàng lá') || q.includes('yellow')) return 'Lá vàng có thể do nhiều nguyên nhân: thiếu nước, thừa nước, hoặc thiếu dinh dưỡng (đạm). Bạn hãy kiểm tra độ ẩm của đất nhé.';
-        if (q.includes('cà chua')) return 'Cà chua cần nhiều ánh sáng mặt trời (ít nhất 6-8 tiếng mỗi ngày) và đất thoát nước tốt.';
-        return 'Cảm ơn bạn đã hỏi. Tôi sẽ ghi nhận và tìm hiểu thêm về vấn đề này. Bạn có muốn chụp ảnh lá cây để tôi phân tích không?';
-    };
+
 
     const renderMessage = ({ item }: { item: TinNhan }) => (
         <Animated.View
@@ -105,7 +112,6 @@ const TroLyAiScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
                 </View>
                 <View style={{ width: 40 }} />
             </View>
-
             <FlatList
                 ref={flatListRef}
                 data={tinNhan}
@@ -119,7 +125,6 @@ const TroLyAiScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
                     </View>
                 ) : null}
             />
-
             <KeyboardAvoidingView
                 behavior={Platform.OS === 'ios' ? 'padding' : undefined}
                 keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}

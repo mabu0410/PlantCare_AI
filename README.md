@@ -4,6 +4,18 @@
 
 ---
 
+## 📸 Giao diện ứng dụng (App Screenshots)
+
+| ![Onboarding](assets/1.png) | ![Trang chủ](assets/2.png) | ![Quét bệnh](assets/3.png) |
+|:---:|:---:|:---:|
+| *Màn hình Onboarding: Giới thiệu ứng dụng* | *Màn hình chính: Tổng quan khu vườn & thời tiết* | *Giao diện quét: Chụp ảnh cây bệnh bằng AI* |
+
+| ![Kết quả](assets/4.png) | ![Nhật ký](assets/5.png) | ![Hồ sơ](assets/6.png) |
+|:---:|:---:|:---:|
+| *Kết quả chẩn đoán: Triệu chứng & cách xử lý* | *Nhật ký cây trồng: Quản lý danh sách cây* | *Cài đặt & Hồ sơ: Tùy chỉnh trải nghiệm* |
+
+---
+
 ## ✨ Các tính năng đã hoàn thiện (Current Features)
 
 ### 1. Phân tích & AI chẩn đoán (UI Flow)

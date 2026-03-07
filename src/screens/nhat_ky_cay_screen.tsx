@@ -17,6 +17,7 @@ import { chamSocService, NhatKyCay } from '../services/cham_soc_service';
 import { useThongBaoToast } from '../components/thong_bao_toast';
 import TheThuyTinh from '../components/the_thuy_tinh';
 import { useNgonNgu, useCoChu } from '../utils/ngon_ngu';
+import { useFocusEffect } from '@react-navigation/native';
 
 interface Props {
     navigation: any;
@@ -37,9 +38,11 @@ const NhatKyCayScreen: React.FC<Props> = ({ navigation }) => {
         setDangTai(false);
     }, []);
 
-    useEffect(() => {
-        taiDuLieu();
-    }, [taiDuLieu]);
+    useFocusEffect(
+        useCallback(() => {
+            taiDuLieu();
+        }, [taiDuLieu])
+    );
 
     const handleXoa = (id: string, ten: string) => {
         Alert.alert('Xác nhận', `Bạn có muốn xóa cây "${ten}" khỏi nhật ký?`, [
